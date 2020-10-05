@@ -8,6 +8,7 @@ const color = require('./lib/color')
 const { spawn, exec } = require('child_process')
 const nhentai = require('nhentai-js')
 const { API } = require('nhentai-api')
+const { msgFilter, color, processTime, isUrl } = require('./lib/utils')
 const { downloader, liriklagu, quotemaker, randomNimek, fb, sleep, jadwalTv, ss } = require('./lib/functions')
 const { help, snk, info, donate, readme, listChannel } = require('./lib/help')
 const { stdout } = require('process')
@@ -603,6 +604,7 @@ module.exports = msgHandler = async (client, message) => {
             const Owner_ = chat.groupMetadata.owner
             await client.sendTextWithMentions(from, `Owner Group : @${Owner_}`)
             break
+        case '#tagall':
         case '#mentionall':
             if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
             if (!isGroupAdmins) return client.reply(from, 'Perintah ini hanya bisa di gunakan oleh admin group', id)
