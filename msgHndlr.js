@@ -2,6 +2,7 @@ const { decryptMedia } = require('@open-wa/wa-decrypt')
 const fs = require('fs-extra')
 const axios = require('axios')
 const moment = require('moment-timezone')
+const os = require('os')
 const get = require('got')
 const color = require('./lib/color')
 const { spawn, exec } = require('child_process')
@@ -137,7 +138,7 @@ module.exports = msgHandler = async (client, message) => {
             }
             break
         case '#quoterandom' :
-        case '#quotes' :
+        case '#quote' :
             client.sendText(from, quotedd())
             break
         case '#quoteanime':
@@ -899,9 +900,11 @@ module.exports = msgHandler = async (client, message) => {
             const { postlink, title, subreddit, url, nsfw, spoiler } = response.data
             client.sendFileFromUrl(from, `${url}`, 'meme.jpg', `${title}`)
             break
-        case '#help':
+        case '#donasi':
+        case '#donate':
             client.sendText(from, donate)
             break
+        case '#menu':
         case '#help':
             client.sendText(from, help)
             break

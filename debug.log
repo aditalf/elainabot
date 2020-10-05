@@ -1,0 +1,4 @@
+[1005/094803.656:ERROR:process_reader_win.cc(151)] SuspendThread: Access is denied. (0x5)
+[1005/094803.752:ERROR:file_io_win.cc(162)] CreateFile C:\Users\Lenovo\AppData\Local\Temp\puppeteer_dev_chrome_profile-itgRDj\Crashpad\settings.dat: The system cannot find the path specified. (0x3)
+[1005/094803.752:ERROR:file_io_win.cc(171)] CreateFile C:\Users\Lenovo\AppData\Local\Temp\puppeteer_dev_chrome_profile-itgRDj\Crashpad\reports\98e78dd1-e1c8-48c9-a0cb-dd8999564157.dmp: The system cannot find the path specified. (0x3)
+[1005/094803.752:ERROR:crash_report_exception_handler.cc(97)] PrepareNewCrashReport failed
