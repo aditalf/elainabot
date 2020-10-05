@@ -188,27 +188,27 @@ module.exports = msgHandler = async (client, message) => {
             if (dataText.length > 500) return client.reply(from, 'Teks tidak boleh terlalu panjang', id)
             var dataBhs = body.slice(5, 7)
 	        if (dataBhs == 'id') {
-                ttsId.save('./tts/resId.mp3', dataText, function () {
+                ttsId.save('./media/tts/resId.mp3', dataText, function () {
                     client.sendPtt(from, './tts/resId.mp3', message.id)
                 })
             } else if (dataBhs == 'en') {
-                ttsEn.save('./tts/resEn.mp3', dataText, function () {
+                ttsEn.save('./media/tts/resEn.mp3', dataText, function () {
                     client.sendPtt(from, './tts/resEn.mp3', message.id)
                 })
             } else if (dataBhs == 'jp') {
-                ttsJp.save('./tts/resJp.mp3', dataText, function () {
+                ttsJp.save('./media/tts/resJp.mp3', dataText, function () {
                     client.sendPtt(from, './tts/resJp.mp3', message.id)
                 })
             } else if (dataBhs == 'ar') {
-                ttsAr.save('./tts/resAr.mp3', dataText, function () {
+                ttsAr.save('./media/tts/resAr.mp3', dataText, function () {
                     client.sendPtt(from, './tts/resAr.mp3', message.id)
                 })
             } else if (dataBhs == 'ru') {
-                ttsRu.save('./tts/resRu.mp3', dataText, function () {
+                ttsRu.save('./media/tts/resRu.mp3', dataText, function () {
                     client.sendPtt(from, './tts/resRu.mp3', message.id)
                 })
             } else if (dataBhs == 'ko') {
-                ttsKo.save('./tts/resKo.mp3', dataText, function () {
+                ttsKo.save('./media/tts/resKo.mp3', dataText, function () {
                     client.sendPtt(from, './tts/resKo.mp3', message.id)
                 })
             } else {
