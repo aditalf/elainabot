@@ -1,10 +1,14 @@
 <h1 align="center">
   <br>
-  <a href="https://github.com/shansekai/Sansekai-BOT"><img src="https://raw.githubusercontent.com/shansekai/Sansekai-BOT/master/anime/original.jpg"></a>
+  <a href="https://github.com/TobzCyberTeam/megumikato"><img src="https://raw.githubusercontent.com/TobzCyberTeam/megumikato/img/master/megumikato.jpg"></a>
   <br>
-  Sansekai BOT Whatsapp
+  MEGUMI KATO
  <br>
   </h1>
+  
+## Contact
+
+Telegram : t.me/tobz2k19
 
 ## Getting Started
 
@@ -14,7 +18,7 @@ This project require NodeJS v12.
 Clone this project
 
 ```bash
-> git clone https://github.com/shansekai/Sansekai-BOT
+> git clone https://github.com/TobzCyberTeam/megumikato
 > cd imageToSticker
 ```
 
@@ -39,6 +43,9 @@ after running it you need to scan the qr
 
 | Command       |                Feature           |
 | :-----------: | :--------------------------------: |
+|  #apakah      | Kerang Ajaib                     |
+|  #rate        | Kerang Ajaib                     |
+|  #kapankah    | Kerang Ajaib                     |
 |  #sticker     | Sticker Creator                  |
 |  #botstat     | Bot status                       |
 |  #gifsticker  |Animated sticker using giphy url |
@@ -67,12 +74,13 @@ after running it you need to scan the qr
 |#tiktok        | Tiktok video downloader |
 | #twt          | Twitter image/video downloader|
 | #fb           | Facebook video downloader|
-|   #promote     |   Promote User (grup only)                  |
-|#demote         |   Demote User (grup only)                 |
-|#kick           |   Kick User (grup only)                   |
-|#del            |   Delete bot message (grup only)           |
-|#tagall         |   Tag All Member Group (grup only)        |
-|#kickall        | Kick All member (grup only)  |
+|   #promote     |   Promote User (admin group only)                  |
+|#demote         |   Demote User (admin group only)                 |
+|#kick           |   Kick User (admin group only)                   |
+|#del            |   Delete bot message (admin group only)           |
+|#tagall         |   Tag All Member Group (admin group only)        |
+|#kickall        | Kick All member (admin group only)  |
+|#linkgroup         |   Link Group (admin group only)                 |
 |#bc             | Broadcast text (owner bot only) |
 |#leaveall       | Leave all grup (owner bot only) |
 |#clearall       | Clear All chat bot (owner bot only) |
@@ -93,5 +101,6 @@ Fix Stuck on linux, install google chrome stable:
 <ul>
 <li>https://github.com/open-wa/wa-automate-nodejs<br>
 <li>https://github.com/YogaSakti/imageToSticker<br>
-<li>https://github.com/MhankBarBar/whatsapp-bot
+<li>https://github.com/MhankBarBar/whatsapp-bot<br>
+<li>https://github.com/shansekai
 </li>
