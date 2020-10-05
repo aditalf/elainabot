@@ -26,24 +26,26 @@ const start = async (client = new Client()) => {
             //left(client, heuh)
             }))
         
-        client.onAddedToGroup(({ groupMetadata: { id }, contact: { name } }) =>
-        client.getGroupMembersId(id)
-            .then((ids) => {
-                console.log('[CLIENT]', color(`Invited to Group. [ ${name} : ${ids.length}]`, 'yellow'))
-                // conditions if the group members are less than 50 then the bot will leave the group
-                if (ids.length <= 5) {
-                    client.sendText(id, 'Sorry, the minimum group member is 10 user to use this bot. Bye~').then(() => client.leaveGroup(id))
-                } else {
-                    client.sendText(id, `Hello group members *${name}*, thank you for inviting this bot, to see the bot menu send *#menu*`)
-                }
-            }))
-     // listening on Incoming Call
-        client.onIncomingCall((call) => {
-            client.sendText(call.peerJid, 'Maaf, saya tidak bisa menerima panggilan. nelfon = block!.\nbila ingin di unblock kamu harus bedonasi dan hubungi whatsapp admin: 081311850715 ')
-            client.contactBlock(call.peerJid)
-            //ban.push(call.peerJid)
-            //fs.writeFileSync('./lib/banned.json', JSON.stringify(ban))
-        })
+        client.onAddedToGroup(((chat) => {
+            let totalMem = chat.groupMetadata.participants.length
+            if (totalMem < 5) { 
+            	client.sendText(chat.id, `Sorry, the minimum group member is 10 user to use this bot. Bye~`).then(() => client.leaveGroup(chat.id)).then(() => client.deleteChat(chat.id))
+            } else {
+                client.sendText(chat.groupMetadata.id, `Hello group members *${name}*, thank you for inviting this bot, to see the bot menu send *#menu*`)
+            }
+        }))
+
+        /*client.onAck((x => {
+            const { from, to, ack } = x
+            if (x !== 3) client.sendSeen(to)
+        }))*/
+
+        // listening on Incoming Call
+        client.onIncomingCall(( async (call) => {
+            await client.sendText(call.peerJid, 'Maaf, saya tidak bisa menerima panggilan. nelfon = block!.\nbila ingin di unblock kamu harus bedonasi dan hubungi whatsapp admin: 081311850715')
+            .then(() => client.contactBlock(call.peerJid))
+        }))
+    }
 
 create('BarBar', options(true, start))
     .then(client => start(client))
