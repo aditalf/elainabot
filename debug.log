@@ -2,3 +2,13 @@
 [1005/094803.752:ERROR:file_io_win.cc(162)] CreateFile C:\Users\Lenovo\AppData\Local\Temp\puppeteer_dev_chrome_profile-itgRDj\Crashpad\settings.dat: The system cannot find the path specified. (0x3)
 [1005/094803.752:ERROR:file_io_win.cc(171)] CreateFile C:\Users\Lenovo\AppData\Local\Temp\puppeteer_dev_chrome_profile-itgRDj\Crashpad\reports\98e78dd1-e1c8-48c9-a0cb-dd8999564157.dmp: The system cannot find the path specified. (0x3)
 [1005/094803.752:ERROR:crash_report_exception_handler.cc(97)] PrepareNewCrashReport failed
+[1005/103434.712:ERROR:process_reader_win.cc(151)] SuspendThread: Access is denied. (0x5)
+[1005/103434.728:ERROR:file_io_win.cc(162)] CreateFile C:\Users\Lenovo\AppData\Local\Temp\puppeteer_dev_chrome_profile-Zk2gQ2\Crashpad\settings.dat: The system cannot find the path specified. (0x3)
+[1005/103434.740:ERROR:file_io_win.cc(171)] CreateFile C:\Users\Lenovo\AppData\Local\Temp\puppeteer_dev_chrome_profile-Zk2gQ2\Crashpad\reports\3cd75f90-1f87-43d1-886d-8d61ccea9080.dmp: The system cannot find the path specified. (0x3)
+[1005/103434.740:ERROR:crash_report_exception_handler.cc(97)] PrepareNewCrashReport failed
+[1005/110550.105:ERROR:file_io_win.cc(162)] CreateFile C:\Users\Lenovo\AppData\Local\Temp\puppeteer_dev_chrome_profile-RPJsTP\Crashpad\settings.dat: The system cannot find the path specified. (0x3)
+[1005/110550.167:ERROR:file_io_win.cc(171)] CreateFile C:\Users\Lenovo\AppData\Local\Temp\puppeteer_dev_chrome_profile-RPJsTP\Crashpad\reports\ce6cd7f3-d903-46ef-9e1c-f1f5d605424f.dmp: The system cannot find the path specified. (0x3)
+[1005/110550.167:ERROR:crash_report_exception_handler.cc(97)] PrepareNewCrashReport failed
+[1006/072421.068:ERROR:file_io_win.cc(162)] CreateFile C:\Users\Lenovo\AppData\Local\Temp\puppeteer_dev_chrome_profile-TUcEF8\Crashpad\settings.dat: The system cannot find the path specified. (0x3)
+[1006/072421.118:ERROR:file_io_win.cc(171)] CreateFile C:\Users\Lenovo\AppData\Local\Temp\puppeteer_dev_chrome_profile-TUcEF8\Crashpad\reports\dcd5cca0-7b49-4cd9-8524-6fd18bdb6050.dmp: The system cannot find the path specified. (0x3)
+[1006/072421.118:ERROR:crash_report_exception_handler.cc(97)] PrepareNewCrashReport failed
