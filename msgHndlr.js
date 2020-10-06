@@ -883,7 +883,7 @@ module.exports = msgHandler = async (client, message) => {
             const _query = body.slice(4)
             if (!_query.match(isUrl)) return client.reply(from, mess.error.Iv, id)
             if (args.length === 1) return client.reply(from, 'Kirim perintah *#ssweb [web]*\nContoh *#ssweb https://google.com*', id)
-            await ss(_query).then(() => client.sendFile(from, './media/img/screenshot.jpeg', 'ss.jpeg', '', id))
+            await ss(_query).then(() => client.sendFile(from, './media/img/screenshot.jpeg', 'screenshot.jpeg', '', id))
             .catch(() => client.reply(from, `Error tidak dapat mengambil screenshot website ${_query}`, id))
             break
         case '#quote':
