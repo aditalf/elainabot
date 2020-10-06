@@ -638,15 +638,15 @@ module.exports = msgHandler = async (client, message) => {
         case '#omentionall':
             if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
             if (!isOwner) return client.reply(from, 'Perintah ini hanya untuk Owner bot', id)
-            const groupMem = await client.getGroupMembers(groupId)
-            let hehe = '╔══✪〘 Mention All 〙✪══\n'
-            for (let i = 0; i < groupMem.length; i++) {
-                hehe += '╠➥'
-                hehe += ` @${groupMem[i].id.replace(/@c.us/g, '')}\n`
+            const groupMek = await client.getGroupMembers(groupId)
+            let heho = '╔══✪〘 Mention All 〙✪══\n'
+            for (let i = 0; i < groupMek.length; i++) {
+                heho += '╠➥'
+                heho += ` @${groupMek[i].id.replace(/@c.us/g, '')}\n`
             }
-            hehe += '╚═〘 MEGUMI KATO BOT 〙'
+            heho += '╚═〘 MEGUMI KATO BOT 〙'
             await sleep(2000)
-            await client.sendTextWithMentions(from, hehe)
+            await client.sendTextWithMentions(from, heho)
             break
         case '#tagall':
         case '#mentionall':
