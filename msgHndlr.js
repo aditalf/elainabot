@@ -722,13 +722,13 @@ module.exports = msgHandler = async (client, message) => {
             }
             break
         case '#add':
-            const orang = args[1]
+            const orgh = args[1]
             if (!isGroupMsg) return client.reply(from, 'Fitur ini hanya bisa di gunakan dalam group', id)
             if (args.length === 1) return client.reply(from, 'Untuk menggunakan fitur ini, kirim perintah *#add* 628xxxxx', id)
             if (!isGroupAdmins) return client.reply(from, 'Perintah ini hanya bisa di gunakan oleh admin group', id)
             if (!isBotGroupAdmins) return client.reply(from, 'Perintah ini hanya bisa di gunakan ketika bot menjadi admin', id)
             try {
-                await client.addParticipant(from,`${orang}@c.us`)
+                await client.addParticipant(from,`${orgh}@c.us`)
             } catch {
                 client.reply(from, mess.error.Ad, id)
             }
