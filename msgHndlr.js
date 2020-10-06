@@ -12,6 +12,7 @@ const { downloader, liriklagu, quotemaker, randomNimek, fb, sleep, jadwalTv, ss,
 const { help, snk, info, donate, readme, listChannel } = require('./lib/help')
 const { stdout } = require('process')
 const quotedd = require('./lib/quote')
+const { uploadImages } = require('./fetcher')
 const nsfw_ = JSON.parse(fs.readFileSync('./lib/NSFW.json'))
 const welkom = JSON.parse(fs.readFileSync('./lib/welcome.json'))
 
@@ -25,8 +26,6 @@ module.exports = msgHandler = async (client, message) => {
         let { pushname, verifiedName } = sender
         pushname = pushname || verifiedName
         const commands = caption || body || ''
-        const command = commands.toLowerCase().split(' ')[0] || ''
-        const arg = body.trim().substring(body.indexOf(' ') + 1)
         const args =  commands.split(' ')
 
         const msgs = (message) => {
