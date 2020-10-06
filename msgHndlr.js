@@ -585,7 +585,7 @@ module.exports = msgHandler = async (client, message) => {
             const chatz = await client.getAllChatIds()
             for (let ids of chatz) {
                 var cvk = await client.getChatById(ids)
-                if (!cvk.isReadOnly) await client.sendText(ids, `[ MEGUMI KATO BOT Broadcast ]\n\n${msg}`)
+                if (!cvk.isReadOnly) await client.sendText(ids, `[ MEGUMI KATO BROADCAST ]\n\n${msg}`)
             }
             client.reply(from, 'Broadcast Success!', id)
             break
@@ -723,8 +723,9 @@ module.exports = msgHandler = async (client, message) => {
             client.deleteMessage(quotedMsgObj.chatId, quotedMsgObj.id, false)
             break
         case '#getses':
+            if (!isOwner) return client.reply(from, 'Perintah ini hanya untuk Owner bot', id)            
             const sesPic = await client.getSnapshot()
-            client.sendFile(from, sesPic, 'session.png', 'Neh...', id)
+            client.sendFile(from, sesPic, 'session.png', 'Nih boss', id)
             break
         case '#lirik':
             if (args.length == 1) return client.reply(from, 'Kirim perintah *#lirik [optional]*, contoh *#lirik aku bukan boneka*', id)
@@ -743,13 +744,13 @@ module.exports = msgHandler = async (client, message) => {
             const listDaerah = await get('https://mhankbarbar.herokuapp.com/daerah').json()
             client.reply(from, listDaerah, id)
             break
-        case '#listblock':
-           if (!isOwner) return client.reply(from, 'Perintah ini hanya untuk Owner bot!', id)
+         case '#listblock':
+            if(!isOwner) return client.reply(from, 'Perintah ini hanya untuk owner bot!', id)
             let hih = `This is list of blocked number\nTotal : ${blockNumber.length}\n`
             for (let i of blockNumber) {
-                hih += `➸ @${i.replace(/@c.us/g,'')}\n`
+                hih += `➸ ${i.replace(/@c.us/g,'')}\n`
             }
-            client.sendTextWithMentions(from, hih, id)
+            await client.reply(from, hih, id)
             break
         case '#jadwalshalat':
             if (args.length === 1) return client.reply(from, '[❗] Kirim perintah *$jadwalShalat [daerah]*\ncontoh : *$jadwalShalat Tangerang*\nUntuk list daerah kirim perintah *#listDaerah*')
