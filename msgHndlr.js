@@ -26,6 +26,7 @@ module.exports = msgHandler = async (client, message) => {
         pushname = pushname || verifiedName
         const commands = caption || body || ''
         const command = commands.toLowerCase().split(' ')[0] || ''
+        const arg = body.trim().substring(body.indexOf(' ') + 1)
         const args =  commands.split(' ')
 
         const msgs = (message) => {
@@ -90,8 +91,8 @@ module.exports = msgHandler = async (client, message) => {
         const isNsfw = isGroupMsg ? nsfw_.includes(chat.id) : false
         const uaOverride = 'WhatsApp/2.2029.4 Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36'
         const isUrl = new RegExp(/https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&/=]*)/gi)
-        const isQuotedImage = quotedMsg && quotedMsg.type === 'image'
         const url = args.length !== 0 ? args[0] : ''
+        const isQuotedImage = quotedMsg && quotedMsg.type === 'image'
         if (!isGroupMsg && command.startsWith('!')) console.log('\x1b[1;31m~\x1b[1;37m>', '[\x1b[1;32mEXEC\x1b[1;37m]', time, color(msgs(command)), 'from', color(pushname))
         if (isGroupMsg && command.startsWith('!')) console.log('\x1b[1;31m~\x1b[1;37m>', '[\x1b[1;32mEXEC\x1b[1;37m]', time, color(msgs(command)), 'from', color(pushname), 'in', color(formattedTitle))
         if (!isGroupMsg && !command.startsWith('!')) console.log('\x1b[1;33m~\x1b[1;37m>', '[\x1b[1;31mMSG\x1b[1;37m]', time, color(body), 'from', color(pushname))
@@ -100,8 +101,8 @@ module.exports = msgHandler = async (client, message) => {
         //if (!isOwner) return
         switch(command) {
 
-        case '#sticker':
-        case '#stiker': {
+        case '!sticker':
+        case '!stiker': {
              /*if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam grup!\n\nKenapa hanya digunakan di dalam grup? karena server yang dimiliki bot kentang jadi dibatasi dulu sampai ada biaya untuk mengupgrade servernya.\n\nKalau mau bantu donasi bisa ketik : *#donasi*\nuntuk melihat info pembayaran donasi.', message.id)
 */
             if ((isMedia || isQuotedImage) && args.length === 0) {
