@@ -8,7 +8,7 @@ const color = require('./lib/color')
 const { spawn, exec } = require('child_process')
 const nhentai = require('nhentai-js')
 const { API } = require('nhentai-api')
-const { downloader, liriklagu, quotemaker, randomNimek, fb, sleep, jadwalTv, ss, msgFilter, processTime, isUrl } = require('./lib/functions')
+const { downloader, liriklagu, quotemaker, randomNimek, fb, sleep, jadwalTv, ss, msgFilter, processTime, isUrl, uploadImages, meme } = require('./lib/functions')
 const { help, snk, info, donate, readme, listChannel } = require('./lib/help')
 const { stdout } = require('process')
 const quotedd = require('./lib/quote')
@@ -101,43 +101,30 @@ module.exports = msgHandler = async (client, message) => {
         //if (!isOwner) return
         switch(command) {
 
-        case '!sticker':
-        case '!stiker': {
-             /*if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam grup!\n\nKenapa hanya digunakan di dalam grup? karena server yang dimiliki bot kentang jadi dibatasi dulu sampai ada biaya untuk mengupgrade servernya.\n\nKalau mau bantu donasi bisa ketik : *#donasi*\nuntuk melihat info pembayaran donasi.', message.id)
-*/
-            if ((isMedia || isQuotedImage) && args.length === 0) {
-                const encryptMedia = isQuotedImage ? quotedMsg : message
-                const _mimetype = isQuotedImage ? quotedMsg.mimetype : mimetype
-                const mediaData = await decryptMedia(encryptMedia, uaOverride)
-                const imageBase64 = `data:${_mimetype};base64,${mediaData.toString('base64')}`
-                client.sendImageAsSticker(from, imageBase64).then(() => {
-                    /*client.reply(from, 'Untuk membantu bot tetap aktif, kamu bisa bantu bot dengan berdonasi. ketik: *#donasi*\nUntuk melihat info donasi.')*/
-                    console.log(`Sticker Processed for ${processTime(t, moment())} Second`)
-                })
-            } else if (args[0] === 'nobg') {
-                /**
-                * This is Premium feature.
-                * Check premium feature at https://trakteer.id/red-emperor/showcase or chat Author for Information.
-                */
-                const encryptMedia = isQuotedImage ? quotedMsg : message
-                const mediaData = await decryptMedia(encryptMedia, uaOverride)
-                const mimetypes = isQuotedImage ? quotedMsg.mimetype : mimetype
-                const base64img = `data:${mimetypes};base64,${mediaData.toString('base64')}`
-                const base64imgnobg = await removebg(base64img)
-                return client.sendImageAsSticker(from, base64imgnobg)
-                    .then(() => client.reply(from, `Here\'s your sticker \n\nProcessed for ${processTime(moment())} _Second_`))
-            } else if (args.length === 1) {
-                if (!url.match(isUrl)) { await client.reply(from, 'Maaf, link yang kamu kirim tidak valid. [Invalid Link]', id) }
-                client.sendStickerfromUrl(from, url)
-                    .then(() => client.reply(from, `Here\'s your sticker \n\nProcessed for ${processTime(moment())} _Second_`))
-                    .then((r) => (!r && r !== undefined) ? client.sendText(from, 'Maaf, link yang kamu kirim tidak memuat gambar. [No Image]') : null)
+        case '#sticker':
+        case '#stiker':
+            if (isMedia && type === 'image') {
+                const mediaData = await decryptMedia(message, uaOverride)
+                const imageBase64 = `data:${mimetype};base64,${mediaData.toString('base64')}`
+                await client.sendImageAsSticker(from, imageBase64)
+            } else if (quotedMsg && quotedMsg.type == 'image') {
+                const mediaData = await decryptMedia(quotedMsg, uaOverride)
+                const imageBase64 = `data:${quotedMsg.mimetype};base64,${mediaData.toString('base64')}`
+                await client.sendImageAsSticker(from, imageBase64)
+            } else if (args.length === 2) {
+                const url = args[1]
+                if (url.match(isUrl)) {
+                    await client.sendStickerfromUrl(from, url, { method: 'get' })
+                        .catch(err => console.log('Caught exception: ', err))
+                } else {
+                    client.reply(from, mess.error.Iv, id)
+                }
             } else {
-                await client.reply(from, 'Tolong kirimkan gambar yang ingin dijadikan sticker', id)
+                    client.reply(from, mess.error.St, id)
             }
             break
-        }
-        case 'textmaker':
-        case 'teksmaker':
+        case '#textmaker':
+        case '#teksmaker':
             if ((isMedia || isQuotedImage) && args.length >= 2) {
                 const top = arg.split('|')[0]
                 const bottom = arg.split('|')[1]
