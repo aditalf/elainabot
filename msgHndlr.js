@@ -189,15 +189,15 @@ module.exports = msgHandler = async (client, message) => {
             var dataBhs = body.slice(5, 7)
 	        if (dataBhs == 'id') {
                 ttsId.save('./media/tts/resId.mp3', dataText, function () {
-                    client.sendPtt(from, './tts/resId.mp3', message.id)
+                    client.sendPtt(from, './media/tts/resId.mp3', message.id)
                 })
             } else if (dataBhs == 'en') {
                 ttsEn.save('./media/tts/resEn.mp3', dataText, function () {
-                    client.sendPtt(from, './tts/resEn.mp3', message.id)
+                    client.sendPtt(from, './media/tts/resEn.mp3', message.id)
                 })
             } else if (dataBhs == 'jp') {
                 ttsJp.save('./media/tts/resJp.mp3', dataText, function () {
-                    client.sendPtt(from, './tts/resJp.mp3', message.id)
+                    client.sendPtt(from, './media/tts/resJp.mp3', message.id)
                 })
             } else if (dataBhs == 'ar') {
                 ttsAr.save('./media/tts/resAr.mp3', dataText, function () {
@@ -205,11 +205,11 @@ module.exports = msgHandler = async (client, message) => {
                 })
             } else if (dataBhs == 'ru') {
                 ttsRu.save('./media/tts/resRu.mp3', dataText, function () {
-                    client.sendPtt(from, './tts/resRu.mp3', message.id)
+                    client.sendPtt(from, './media/tts/resRu.mp3', message.id)
                 })
             } else if (dataBhs == 'ko') {
                 ttsKo.save('./media/tts/resKo.mp3', dataText, function () {
-                    client.sendPtt(from, './tts/resKo.mp3', message.id)
+                    client.sendPtt(from, './media/tts/resKo.mp3', message.id)
                 })
             } else {
                 client.reply(from, 'Masukin kode bahasanya : [id] untuk indonesia, [en] untuk inggris, [jp] untuk jepang, [ar] untuk arab, [ru] untuk russia, dan [ko] untuk korea\n\nContoh : #tts id selamat pagi', id)
