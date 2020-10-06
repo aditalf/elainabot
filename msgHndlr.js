@@ -12,7 +12,7 @@ const { downloader, liriklagu, quotemaker, randomNimek, fb, sleep, jadwalTv, ss,
 const { help, snk, info, donate, readme, listChannel } = require('./lib/help')
 const { stdout } = require('process')
 const quotedd = require('./lib/quote')
-const { uploadImages } = require('./fetcher')
+const { uploadImages } = require('./lib/fetcher')
 const nsfw_ = JSON.parse(fs.readFileSync('./lib/NSFW.json'))
 const welkom = JSON.parse(fs.readFileSync('./lib/welcome.json'))
 
