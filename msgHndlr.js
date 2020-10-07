@@ -26,7 +26,7 @@ module.exports = msgHandler = async (client, message) => {
         pushname = pushname || verifiedName
         const commands = caption || body || ''
         const command = commands.toLowerCase().split(' ')[0] || ''
-        const arg = commands.substring(body.indexOf(' ') + 1)
+        const arg = commands.substring(commands.indexOf(' ') + 1)
         const args =  commands.split(' ')
 
         const msgs = (message) => {
