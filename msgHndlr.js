@@ -14,6 +14,7 @@ const { stdout } = require('process')
 const quotedd = require('./lib/quote')
 const nsfw_ = JSON.parse(fs.readFileSync('./lib/NSFW.json'))
 const welkom = JSON.parse(fs.readFileSync('./lib/welcome.json'))
+const uploadImages = require('./lib/fetcher')
 
 moment.tz.setDefault('Asia/Jakarta').locale('id')
 
