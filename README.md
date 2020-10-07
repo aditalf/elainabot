@@ -18,8 +18,8 @@ This project require NodeJS v12.
 Clone this project
 
 ```bash
-> git clone https://github.com/TobzCyberTeam/megumikato
-> cd imageToSticker
+> git clone https://github.com/ItzTobz/megumikato2
+> cd ItzTobz
 ```
 
 Install the dependencies:
