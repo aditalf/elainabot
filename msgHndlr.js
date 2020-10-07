@@ -14,7 +14,7 @@ const { stdout } = require('process')
 const quotedd = require('./lib/quote')
 const nsfw_ = JSON.parse(fs.readFileSync('./lib/NSFW.json'))
 const welkom = JSON.parse(fs.readFileSync('./lib/welcome.json'))
-const uploadImages = require('./lib/fetcher')
+const { uploadImages } = require('./lib/fetcher')
 
 moment.tz.setDefault('Asia/Jakarta').locale('id')
 
@@ -27,7 +27,6 @@ module.exports = msgHandler = async (client, message) => {
         pushname = pushname || verifiedName
         const commands = caption || body || ''
         const command = commands.toLowerCase().split(' ')[0] || ''
-        const arg = commands.substring(commands.indexOf(' ') + 1)
         const args =  commands.split(' ')
 
         const msgs = (message) => {
@@ -127,8 +126,8 @@ module.exports = msgHandler = async (client, message) => {
         case '#textmaker':
         case '#teksmaker':
             if ((isMedia || isQuotedImage) && args.length >= 2) {
-                const top = arg.split('|')[0]
-                const bottom = arg.split('|')[1]
+                const top = command.split('|')[0]
+                const bottom = command.split('|')[1]
                 const encryptMedia = isQuotedImage ? quotedMsg : message
                 const mediaData = await decryptMedia(encryptMedia, uaOverride)
                 const getUrl = await uploadImages(mediaData, false)
