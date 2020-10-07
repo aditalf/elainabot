@@ -53,16 +53,16 @@ module.exports = msgHandler = async (client, message) => {
             ]
 
         const rate = [
-            '100',
-            '90',
-            '80',
-            '70',
-            '60',
-            '50',
-            '40',
-            '30',
-            '20',
-            '10'
+            '100%',
+            '90%',
+            '80%',
+            '70%',
+            '60%',
+            '50%',
+            '40%',
+            '30%',
+            '20%',
+            '10%'
             ]
 
         const mess = {
@@ -807,7 +807,7 @@ module.exports = msgHandler = async (client, message) => {
             await client.sendTextWithMentions(from, `Perintah diterima, menghapus jabatan @${mentionedJidList[0]}.`)
             break
         case '#join':
-            if (args.length === 1) return client.reply(from, 'Kirim perintah *#join* linkgroup\n\nEx:\n!join https://chat.whatsapp.com/blablablablablabla', id)
+            if (args.length === 1) return client.reply(from, 'Kirim perintah *#join* linkgroup\n\nEx:\n#join https://chat.whatsapp.com/blablablablablabla', id)
             if (!isOwner) return client.reply(from, 'Perintah ini hanya untuk Owner bot', id)
             const link = body.slice(6)
             const tGr = await client.getAllGroups()
