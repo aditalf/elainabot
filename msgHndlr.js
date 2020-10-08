@@ -205,7 +205,7 @@ module.exports = msgHandler = async (client, message) => {
                 })
             } else if (dataBhs == 'ar') {
                 ttsAr.save('./media/tts/resAr.mp3', dataText, function () {
-                    client.sendPtt(from, './tts/resAr.mp3', message.id)
+                    client.sendPtt(from, './media/tts/resAr.mp3', message.id)
                 })
             } else if (dataBhs == 'ru') {
                 ttsRu.save('./media/tts/resRu.mp3', dataText, function () {
@@ -221,9 +221,9 @@ module.exports = msgHandler = async (client, message) => {
             break
         case '#nulis':
             if (args.length === 1) return client.reply(from, 'Kirim perintah *#nulis [teks]*', id)
-            const text = body.slice(7)
+            const nls = body.slice(7)
             client.reply(from, mess.wait, id)
-            const splitText = text.replace(/(\S+\s*){1,10}/g, '$&\n')
+            const splitText = nls.replace(/(\S+\s*){1,10}/g, '$&\n')
             const fixHeight = splitText.split('\n').slice(0, 25).join('\n')
             spawn('convert', [
                 './media/img/before.jpg',
