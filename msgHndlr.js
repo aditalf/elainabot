@@ -123,22 +123,6 @@ module.exports = msgHandler = async (client, message) => {
                     client.reply(from, mess.error.St, id)
             }
             break
-        case '#textmaker':
-        case '#teksmaker':
-            if ((isMedia || isQuotedImage) && args.length >= 2) {
-                const top = command.split('|')[0]
-                const bottom = command.split('|')[1]
-                const encryptMedia = isQuotedImage ? quotedMsg : message
-                const mediaData = await decryptMedia(encryptMedia, uaOverride)
-                const getUrl = await uploadImages(mediaData, false)
-                const ImageBase64 = await meme.custom(getUrl, top, bottom)
-                client.sendFile(from, ImageBase64, 'image.png', '', null, true)
-                    .then((serialized) => console.log(`Sukses Mengirim File dengan id: ${serialized} diproses selama ${processTime(t, moment())}`))
-                    .catch((err) => console.error(err))
-            } else {
-                await client.reply(from, 'Tidak ada gambar! Untuk membuka cara penggnaan kirim #menu [Wrong Format]', id)
-            }
-            break
         case '#stickergif':
         case '#stikergif':
         case '#sgif':
@@ -446,7 +430,14 @@ module.exports = msgHandler = async (client, message) => {
             break
         case '#nsfwmenu':
             if (!isNsfw) return
-            client.reply(from, '1. !randomHentai\n2. !randomNsfwNeko', id)
+            client.reply(from, '1. #randomHentai\n2. #randomNsfwNeko', id)
+            break
+        case '#textmaker':
+            if (args.length === 1)  return client.reply(from, 'Kirim perintah *#igStalk @username*\nConntoh *#igStalk @duar_amjay*', id)
+            const textmk = await get.get('https://api.haipbis.xyz/randomcooltext?text='+ args[1]).json()
+            const { text, image } = textmk
+            const txtmkr = `➸ *Text* : ${text}`
+            await client.sendFileFromUrl(from, image, 'textmk.jpg', txtmkr, id)
             break
         case '#igstalk':
             if (args.length === 1)  return client.reply(from, 'Kirim perintah *#igStalk @username*\nConntoh *#igStalk @duar_amjay*', id)
