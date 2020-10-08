@@ -433,14 +433,15 @@ module.exports = msgHandler = async (client, message) => {
             client.reply(from, '1. #randomHentai\n2. #randomNsfwNeko', id)
             break
         case '#textmaker':
-            if (args.length === 1)  return client.reply(from, 'Kirim perintah *#igStalk @username*\nConntoh *#igStalk @duar_amjay*', id)
-            const textmk = await get.get('https://api.haipbis.xyz/randomcooltext?text='+ args[1]).json()
+            if (args.length === 1)  return client.reply(from, 'Kirim perintah *#textmaker Text\nContoh *#textmaker Owner Gans*', id)
+            tmkr = body.slice(14)
+            const textmk = await get.get(`https://api.haipbis.xyz/randomcooltext?text=${tmkr}`).json()
             const { text, image } = textmk
             const txtmkr = `➸ *Text* : ${text}`
             await client.sendFileFromUrl(from, image, 'textmk.jpg', txtmkr, id)
             break
         case '#igstalk':
-            if (args.length === 1)  return client.reply(from, 'Kirim perintah *#igStalk @username*\nConntoh *#igStalk @duar_amjay*', id)
+            if (args.length === 1)  return client.reply(from, 'Kirim perintah *#igStalk @username*\nContoh *#igStalk @duar_amjay*', id)
             const stalk = await get.get('https://mhankbarbar.herokuapp.com/api/stalk?username='+ args[1]).json()
             if (stalk.error) return client.reply(from, stalk.error, id)
             const { Biodata, Jumlah_Followers, Jumlah_Following, Jumlah_Post, Name, Username, Profile_pic } = stalk
@@ -858,7 +859,7 @@ module.exports = msgHandler = async (client, message) => {
             await client.reply(from, hih, id)
             break
         case '#jadwalshalat':
-            if (args.length === 1) return client.reply(from, '[❗] Kirim perintah *$jadwalShalat [daerah]*\ncontoh : *$jadwalShalat Tangerang*\nUntuk list daerah kirim perintah *#listDaerah*')
+            if (args.length === 1) return client.reply(from, '[❗] Kirim perintah *#jadwalShalat [daerah]*\ncontoh : *#jadwalShalat Tangerang*\nUntuk list daerah kirim perintah *#listDaerah*')
             const daerah = body.slice(14)
             const jadwalShalat = await get.get(`https://mhankbarbar.herokuapp.com/api/jadwalshalat?daerah=${daerah}`).json()
             if (jadwalShalat.error) return client.reply(from, jadwalShalat.error, id)
