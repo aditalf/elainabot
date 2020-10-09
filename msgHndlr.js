@@ -432,7 +432,7 @@ module.exports = msgHandler = async (client, message) => {
             break
         case '#nsfwmenu':
             if (!isNsfw) return
-            client.reply(from, '1. #randomHentai\n2. #randomNsfwNeko\n3. #nhentai [kode]', id)
+            client.reply(from, '1. #randomHentai\n2. #randomNsfwNeko', id)
             break
         case '#textmaker':
             if (args.length === 1)  return client.reply(from, 'Kirim perintah *#textmaker Text\nContoh *#textmaker Owner Gans*', id)
@@ -466,6 +466,7 @@ module.exports = msgHandler = async (client, message) => {
         case '#nh'
             if (isGroupMsg) {
             if (!isNsfw) return client.reply(from, 'Command/Perintah NSFW belum di aktifkan di group ini!', id)
+            if (!isOwner) return
             //if (isGroupMsg) return client.reply(from, 'Sorry this command for private chat only!', id)
             if (args.length === 2) {
                 const nuklir = body.split(' ')[1]
@@ -503,7 +504,6 @@ module.exports = msgHandler = async (client, message) => {
                 }
             } else {
                 client.reply(from, '[ WRONG ] Kirim perintah *#nhentai [kode]* untuk contoh kirim perintah *#readme*')
-                }
             }
         	break
         case '#brainly':
