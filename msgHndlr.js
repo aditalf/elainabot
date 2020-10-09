@@ -503,6 +503,7 @@ module.exports = msgHandler = async (client, message) => {
                 }
             } else {
                 client.reply(from, '[ WRONG ] Kirim perintah *#nhentai [kode]* untuk contoh kirim perintah *#readme*')
+                }
             }
         	break
         case '#brainly':
