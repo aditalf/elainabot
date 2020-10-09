@@ -87,6 +87,7 @@ module.exports = msgHandler = async (client, message) => {
         const isBotGroupAdmins = isGroupMsg ? groupAdmins.includes(botNumber + '@c.us') : false
         const ownerNumber = '6281311850715@c.us'
         const isOwner = sender.id === ownerNumber
+        const isOwAdm = groupAdmins && isOwner
         const isBlocked = blockNumber.includes(sender.id)
         const isNsfw = isGroupMsg ? nsfw_.includes(chat.id) : false
         const uaOverride = 'WhatsApp/2.2029.4 Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36'
@@ -377,8 +378,9 @@ module.exports = msgHandler = async (client, message) => {
             const epbe = await fb(args[1])
             client.sendFileFromUrl(from, epbe.url, `Cuih${epbe.exts}`, epbe.capt, id)
             break
+        case '#owner':
         case '#creator':
-            client.sendContact(from, '6285892766102@c.us')
+            client.sendContact(from, '6281311850715@c.us')
             break
         case '#ig':
             if (args.length === 1) return client.reply(from, 'Kirim perintah *#ig [linkIg]* untuk contoh silahkan kirim perintah *#readme*')
@@ -430,12 +432,11 @@ module.exports = msgHandler = async (client, message) => {
             break
         case '#nsfwmenu':
             if (!isNsfw) return
-            client.reply(from, '1. #randomHentai\n2. #randomNsfwNeko', id)
+            client.reply(from, '1. #randomHentai\n2. #randomNsfwNeko\n3. #nhentai [kode]', id)
             break
         case '#textmaker':
             if (args.length === 1)  return client.reply(from, 'Kirim perintah *#textmaker Text\nContoh *#textmaker Owner Gans*', id)
-            tmkr = body.slice(14)
-            const textmk = await get.get(`https://api.haipbis.xyz/randomcooltext?text=${tmkr}`).json()
+            const textmk = await get.get(`https://api.haipbis.xyz/randomcooltext?text=${tmkr}`+ body.slice(7)).json()
             const { text, image } = textmk
             const txtmkr = `➸ *Text* : ${text}`
             await client.sendFileFromUrl(from, image, 'textmk.jpg', txtmkr, id)
@@ -461,8 +462,10 @@ module.exports = msgHandler = async (client, message) => {
             const res_animek = `${animek.result}\n\n${animek.sinopsis}`
             client.sendFileFromUrl(from, animek.thumb, 'dewabatch.jpg', res_animek, id)
             break
-        case '#nh':
-            if (!isOwner) return
+        case '#nhentai':
+        case '#nh'
+            if (isGroupMsg) {
+            if (!isNsfw) return client.reply(from, 'Command/Perintah NSFW belum di aktifkan di group ini!', id)
             //if (isGroupMsg) return client.reply(from, 'Sorry this command for private chat only!', id)
             if (args.length === 2) {
                 const nuklir = body.split(' ')[1]
@@ -496,10 +499,10 @@ module.exports = msgHandler = async (client, message) => {
                         client.reply(from, '[❗] Terjadi kesalahan, mungkin kode nuklir salah', id)
                     }
                 } else {
-                    client.reply(from, '[❗] Kode nuClear Salah!')
+                    client.reply(from, '[❗] Kode nuklir Salah!')
                 }
             } else {
-                client.reply(from, '[ WRONG ] Kirim perintah *#nh [nuClear]* untuk contoh kirim perintah *#readme*')
+                client.reply(from, '[ WRONG ] Kirim perintah *#nhentai [kode]* untuk contoh kirim perintah *#readme*')
             }
         	break
         case '#brainly':
