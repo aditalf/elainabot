@@ -463,9 +463,7 @@ module.exports = msgHandler = async (client, message) => {
             client.sendFileFromUrl(from, animek.thumb, 'dewabatch.jpg', res_animek, id)
             break
         case '#nhentai':
-        case '#nh'
-            if (isGroupMsg) {
-            if (!isNsfw) return client.reply(from, 'Command/Perintah NSFW belum di aktifkan di group ini!', id)
+        case '#nh':
             if (!isOwner) return
             //if (isGroupMsg) return client.reply(from, 'Sorry this command for private chat only!', id)
             if (args.length === 2) {
