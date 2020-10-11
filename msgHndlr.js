@@ -181,6 +181,7 @@ module.exports = msgHandler = async (client, message) => {
                         }
             break
         case '#tts':
+            if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
             if (args.length === 1) return client.reply(from, 'Kirim perintah *#tts* [id, en, jp, ar, ru, ko] [teks], contoh *#tts* id halo semua')
             const ttsId = require('node-gtts')('id')
             const ttsEn = require('node-gtts')('en')
@@ -221,6 +222,7 @@ module.exports = msgHandler = async (client, message) => {
             }
             break
         case '#nulis':
+            if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
             if (args.length === 1) return client.reply(from, 'Kirim perintah *#nulis [teks]*', id)
             const nls = body.slice(7)
             client.reply(from, mess.wait, id)
@@ -248,6 +250,7 @@ module.exports = msgHandler = async (client, message) => {
             break
         case '#twt':
         case '#twitter':
+            if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
             if (args.length !== 1) return client.reply(from, 'Maaf, format pesan salah silahkan periksa menu. [Wrong Format]', id)
             if (!isUrl(url) & !url.includes('twitter.com') || url.includes('t.co')) return client.reply(from, 'Maaf, url yang kamu kirim tidak valid. [Invalid Link]', id)
             await client.reply(from, `_Scraping Metadata..._ \n\nSupport Bot Kami Agar Tetap Aktif Dengan Cara #donasi`, id)
@@ -270,6 +273,7 @@ module.exports = msgHandler = async (client, message) => {
                 .catch(() => client.sendText(from, 'Maaf, link tidak valid atau tidak ada media di link yang kamu kirim. [Invalid Link]'))
             break
         case '#tiktok':
+            if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
             if (args.length !== 1) return client.reply(from, 'Maaf, format pesan salah silahkan periksa menu. [Wrong Format]', id)
             if (!isUrl(url) && !url.includes('tiktok.com')) return client.reply(from, 'Maaf, link yang kamu kirim tidak valid. [Invalid Link]', id)
             await client.reply(from, `_Scraping Metadata..._ \n\nUntuk Donasi Ketik *#donasi**`, id)
@@ -282,6 +286,7 @@ module.exports = msgHandler = async (client, message) => {
             }).catch(() => client.reply(from, 'Gagal mengambil metadata, link yang kamu kirim tidak valid. [Invalid Link]', id))
             break
         case '#ytmp3':
+            if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
             if (args.length === 1) return client.reply(from, 'Kirim perintah *#ytmp3 [linkYt]*, untuk contoh silahkan kirim perintah *#readme*')
             let isLinks = args[1].match(/(?:https?:\/{2})?(?:w{3}\.)?youtu(?:be)?\.(?:com|be)(?:\/watch\?v=|\/)([^\s&]+)/)
             if (!isLinks) return client.reply(from, mess.error.Iv, id)
@@ -302,6 +307,7 @@ module.exports = msgHandler = async (client, message) => {
             }
             break
         case '#ytmp4':
+            if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
             if (args.length === 1) return client.reply(from, 'Kirim perintah *#ytmp4 [linkYt]*, untuk contoh silahkan kirim perintah *#readme*')
             let isLin = args[1].match(/(?:https?:\/{2})?(?:w{3}\.)?youtu(?:be)?\.(?:com|be)(?:\/watch\?v=|\/)([^\s&]+)/)
             if (!isLin) return client.reply(from, mess.error.Iv, id)
@@ -321,6 +327,7 @@ module.exports = msgHandler = async (client, message) => {
             }
             break
         case '#koin':
+            if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
             const side = Math.floor(Math.random() * 2) + 1
             if (side == 1) {
               client.sendStickerfromUrl(from, 'https://i.ibb.co/YTWZrZV/2003-indonesia-500-rupiah-copy.png', { method: 'get' })
@@ -329,11 +336,13 @@ module.exports = msgHandler = async (client, message) => {
             }
             break
         case '#dadu':
+            if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
             const dice = Math.floor(Math.random() * 6) + 1
             await client.sendStickerfromUrl(from, 'https://www.random.org/dice/dice' + dice + '.png', { method: 'get' })
             break
         case '#wiki':
             if (args.length === 1) return client.reply(from, 'Kirim perintah *#wiki [query]*\nContoh : *#wiki asu*', id)
+            if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
             const query_ = body.slice(6)
             const wiki = await get.get('https://mhankbarbar.herokuapp.com/api/wiki?q='+ query_).json()
             if (wiki.error) {
@@ -350,10 +359,10 @@ module.exports = msgHandler = async (client, message) => {
             break
         case '#nilai':
         case '#rate':
-            const rate = args.join(' ')
+            const rating = args.join(' ')
             const awr = rate[Math.floor(Math.random() * (rate.length))]
-            if (!rate) client.reply(from, '⚠️ Format salah! Ketik *#menu* untuk penggunaan.')
-            await client.sendText(from, `Pertanyaan: *${rate}* \n\nJawaban: ${awr}`)
+            if (!rating) client.reply(from, '⚠️ Format salah! Ketik *#menu* untuk penggunaan.')
+            await client.sendText(from, `Pertanyaan: *${rating}* \n\nJawaban: ${awr}`)
             break
         case '#apakah':
             const nanya = args.join(' ')
@@ -363,6 +372,7 @@ module.exports = msgHandler = async (client, message) => {
             break
         case '#cuaca':
             if (args.length === 1) return client.reply(from, 'Kirim perintah *#cuaca [tempat]*\nContoh : *#cuaca tangerang', id)
+            if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
             const tempat = body.slice(7)
             const weather = await get.get('https://mhankbarbar.herokuapp.com/api/cuaca?q='+ tempat).json()
             if (weather.error) {
@@ -372,6 +382,7 @@ module.exports = msgHandler = async (client, message) => {
             }
             break
         case '#fb':
+            if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
             if (args.length === 1) return client.reply(from, 'Kirim perintah *#fb [linkFb]* untuk contoh silahkan kirim perintah *#readme*', id)
             if (!args[1].includes('facebook.com')) return client.reply(from, mess.error.Iv, id)
             client.reply(from, mess.wait, id)
@@ -380,9 +391,10 @@ module.exports = msgHandler = async (client, message) => {
             break
         case '#owner':
         case '#creator':
-            client.sendContact(from, '6281311850715@c.us')
+            client.reply(from, 'My Owner : Tobz\nWhatsapp : wa.me/6281311850715', id)
             break
         case '#ig':
+            if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
             if (args.length === 1) return client.reply(from, 'Kirim perintah *#ig [linkIg]* untuk contoh silahkan kirim perintah *#readme*')
             if (!args[1].match(isUrl) && !args[1].includes('instagram.com')) return client.reply(from, mess.error.Iv, id)
             try {
@@ -431,10 +443,12 @@ module.exports = msgHandler = async (client, message) => {
             }
             break
         case '#nsfwmenu':
+            if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
             if (!isNsfw) return
-            client.reply(from, '1. #randomHentai\n2. #randomNsfwNeko', id)
+            client.reply(from, '1. #randomHentai\n2. #randomNsfwNeko\n3. #nhentai [kode]', id)
             break
         case '#textmaker':
+            if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
             if (args.length === 1)  return client.reply(from, 'Kirim perintah *#textmaker Text\nContoh *#textmaker Owner Gans*', id)
             const textmk = await get.get(`https://api.haipbis.xyz/randomcooltext?text=${tmkr}`+ body.slice(7)).json()
             const { text, image } = textmk
@@ -442,6 +456,7 @@ module.exports = msgHandler = async (client, message) => {
             await client.sendFileFromUrl(from, image, 'textmk.jpg', txtmkr, id)
             break
         case '#igstalk':
+            if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
             if (args.length === 1)  return client.reply(from, 'Kirim perintah *#igStalk @username*\nContoh *#igStalk @duar_amjay*', id)
             const stalk = await get.get('https://mhankbarbar.herokuapp.com/api/stalk?username='+ args[1]).json()
             if (stalk.error) return client.reply(from, stalk.error, id)
@@ -450,12 +465,14 @@ module.exports = msgHandler = async (client, message) => {
             await client.sendFileFromUrl(from, Profile_pic, 'Profile.jpg', caps, id)
             break
         case '#infogempa':
+            if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
             const bmkg = await get.get('https://mhankbarbar.herokuapp.com/api/infogempa').json()
             const { potensi, koordinat, lokasi, kedalaman, magnitude, waktu, map } = bmkg
             const hasil = `*${waktu}*\n📍 *Lokasi* : *${lokasi}*\n〽️ *Kedalaman* : *${kedalaman}*\n💢 *Magnitude* : *${magnitude}*\n🔘 *Potensi* : *${potensi}*\n📍 *Koordinat* : *${koordinat}*`
             client.sendFileFromUrl(from, map, 'shakemap.jpg', hasil, id)
             break
         case '#anime':
+            if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
             if (args.length === 1) return client.reply(from, 'Kirim perintah *#anime [query]*\nContoh : *#anime darling in the franxx*', id)
             const animek = await get.get('https://mhankbarbar.herokuapp.com/api/dewabatch?q=' + body.slice(7)).json()
             if (animek.error) return client.reply(from, animek.error, id)
@@ -464,8 +481,8 @@ module.exports = msgHandler = async (client, message) => {
             break
         case '#nhentai':
         case '#nh':
-            if (!isOwner) return
-            //if (isGroupMsg) return client.reply(from, 'Sorry this command for private chat only!', id)
+            if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
+            if (!isNsfw) return client.reply(from, 'Command/Perintah NSFW belum di aktifkan di group ini!', id)
             if (args.length === 2) {
                 const nuklir = body.split(' ')[1]
                 client.reply(from, mess.wait, id)
@@ -505,6 +522,7 @@ module.exports = msgHandler = async (client, message) => {
             }
         	break
         case '#brainly':
+            if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
             if (args.length >= 2){
                 const BrainlySearch = require('./lib/brainly')
                 let tanya = body.slice(9)
@@ -528,6 +546,7 @@ module.exports = msgHandler = async (client, message) => {
             }
             break
         case '#wait':
+            if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
             if (isMedia && type === 'image' || quotedMsg && quotedMsg.type === 'image') {
                 if (isMedia) {
                     var mediaData = await decryptMedia(message, uaOverride)
@@ -569,6 +588,7 @@ module.exports = msgHandler = async (client, message) => {
             }
             break
         case '#quotemaker':
+            if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
             arg = body.trim().split('|')
             if (arg.length >= 4) {
                 client.reply(from, mess.wait, id)
@@ -581,7 +601,7 @@ module.exports = msgHandler = async (client, message) => {
                     })
                 })
             } else {
-                client.reply(from, 'Usage: \n!quotemaker |teks|watermark|theme\n\nEx :\n!quotemaker |ini contoh|bicit|random', id)
+                client.reply(from, 'Usage: \n#quotemaker |teks|watermark|theme\n\nEx :\n#quotemaker |ini contoh|bicit|random', id)
             }
             break
         case '#olinkgroup':
@@ -836,12 +856,14 @@ module.exports = msgHandler = async (client, message) => {
             client.sendFile(from, sesPic, 'session.png', 'Nih boss', id)
             break
         case '#lirik':
+            if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
             if (args.length == 1) return client.reply(from, 'Kirim perintah *#lirik [optional]*, contoh *#lirik aku bukan boneka*', id)
             const lagu = body.slice(7)
             const lirik = await liriklagu(lagu)
             client.reply(from, lirik, id)
             break
         case '#chord':
+            if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
             if (args.length === 1) return client.reply(from, 'Kirim perintah *#chord [query]*, contoh *#chord aku bukan boneka*', id)
             const query__ = body.slice(7)
             const chord = await get.get('https://mhankbarbar.herokuapp.com/api/chord?q='+ query__).json()
@@ -849,6 +871,7 @@ module.exports = msgHandler = async (client, message) => {
             client.reply(from, chord.result, id)
             break
         case '#listdaerah':
+            if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
             const listDaerah = await get('https://mhankbarbar.herokuapp.com/daerah').json()
             client.reply(from, listDaerah, id)
             break
@@ -861,6 +884,7 @@ module.exports = msgHandler = async (client, message) => {
             await client.reply(from, hih, id)
             break
         case '#jadwalshalat':
+            if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
             if (args.length === 1) return client.reply(from, '[❗] Kirim perintah *#jadwalShalat [daerah]*\ncontoh : *#jadwalShalat Tangerang*\nUntuk list daerah kirim perintah *#listDaerah*')
             const daerah = body.slice(14)
             const jadwalShalat = await get.get(`https://mhankbarbar.herokuapp.com/api/jadwalshalat?daerah=${daerah}`).json()
@@ -880,27 +904,33 @@ module.exports = msgHandler = async (client, message) => {
             client.sendText(from, `Penggunaan RAM: *${(process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2)}MB / ${Math.round(require('os').totalmem / 1024 / 1024)}MB*\nCPU: *${os.cpus().length}*\n\nStatus :\n- *${loadedMsg}* Loaded Messages\n- *${groups.length}* Group Chats\n- *${chatIds.length - groups.length}* Personal Chats\n- *${chatIds.length}* Total Chats\n\nSpeed: ${processTime(t, moment())} _Second_`)
             break
         case '#listchannel':
+            if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
             client.reply(from, listChannel, id)
             break
         case '#jadwaltv':
+            if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
             if (args.length === 1) return client.reply(from, 'Kirim perintah *#jadwalTv [channel]*', id)
             const query = body.slice(10).toLowerCase()
             const jadwal = await jadwalTv(query)
             client.reply(from, jadwal, id)
             break
         case '#jadwaltvnow':
+            if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
             const jadwalNow = await get.get('https://api.haipbis.xyz/jadwaltvnow').json()
             client.reply(from, `Jam : ${jadwalNow.jam}\n\nJadwalTV : ${jadwalNow.jadwalTV}`, id)
             break
         case '#loli':
+            if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
             const loli = await get.get('https://mhankbarbar.herokuapp.com/api/randomloli').json()
             client.sendFileFromUrl(from, loli.result, 'loli.jpeg', 'FBI', id)
             break
         case '#waifu':
+            if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
             const waifu = await get.get('https://mhankbarbar.herokuapp.com/api/waifu').json()
             client.sendFileFromUrl(from, waifu.image, 'Waifu.jpg', `➸ Name : ${waifu.name}\n➸ Description : ${waifu.desc}\n\n➸ Source : ${waifu.source}`, id)
             break
         case '#husbu':
+            if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
             const diti = fs.readFileSync('./lib/husbu.json')
             const ditiJsin = JSON.parse(diti)
             const rindIndix = Math.floor(Math.random() * ditiJsin.length)
