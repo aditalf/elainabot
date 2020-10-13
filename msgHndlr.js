@@ -12,7 +12,11 @@ const { downloader, liriklagu, quotemaker, randomNimek, fb, sleep, jadwalTv, ss,
 const { help, snk, info, donate, readme, listChannel } = require('./lib/help')
 const { stdout } = require('process')
 const quotedd = require('./lib/quote')
-const nsfw_ = JSON.parse(fs.readFileSync('./lib/NSFW.json'))
+const msgFilter = require('./lib/msgFilter')
+const akaneko = require('akaneko')
+const { exec } = require('child_process')
+const fetch = require('node-fetch')
+const bent = require('bent'const nsfw_ = JSON.parse(fs.readFileSync('./lib/NSFW.json'))
 const welkom = JSON.parse(fs.readFileSync('./lib/welcome.json'))
 const ban = JSON.parse(fs.readFileSync('./lib/banned.json'))
 const { uploadImages } = require('./lib/fetcher')
@@ -113,8 +117,10 @@ module.exports = msgHandler = async (client, message) => {
 
         case '#ban':
             if(!isOwner && !isDonate) return client.reply(from, 'Hanya member donasi yang diberikan command special ini', id)
+            await client.sendText(from, `Perintah Special diterima, banned:\n${mentionedJidList.join('\n')}`)
             for (let i = 0; i < mentionedJidList.length; i++) {
-                ban.push(mentionedJidList[i])
+                if (isAll.includes(mentionedJidList[i])) return client.reply(from, mess.error.Sp, id)
+                await ban.push(mentionedJidList[i])
                 fs.writeFileSync('./lib/banned.json', JSON.stringify(ban))
                 client.reply(from, 'Success ban target!', id)
             }
@@ -122,9 +128,10 @@ module.exports = msgHandler = async (client, message) => {
         case '#unban':
             if(!isOwner && !isDonate) return client.reply(from, 'Hanya member donasi yang diberikan command special ini', id)
             let inx = ban.indexOf(mentionedJidList[0])
-            ban.splice(inx, 1)
-            fs.writeFileSync('./lib/banned.json', JSON.stringify(ban))
-            client.reply(from, 'Unbanned User!', id)
+            if (isAll.includes(mentionedJidList[inx])) return client.reply(from, mess.error.Sp, id)
+            await ban.splice(inx, 1)
+                fs.writeFileSync('./lib/banned.json', JSON.stringify(ban))
+                client.reply(from, 'Unbanned User!', id)
             break
         case '#groupinfo' :
             if (!isGroupMsg) return client.reply(from, '.', message.id) 
