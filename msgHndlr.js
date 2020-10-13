@@ -80,6 +80,7 @@ module.exports = msgHandler = async (client, message) => {
                 Yt4: '[❗] Terjadi kesalahan, mungkin error di sebabkan oleh sistem.',
                 Ig: '[❗] Terjadi kesalahan, mungkin karena akunnya private',
                 Ki: '[❗] Bot tidak bisa mengeluarkan admin group!',
+                Ow: '[❗] Bot tidak bisa mengeluarkan Owner',
                 Ad: '[❗] Tidak dapat menambahkan target, mungkin karena di private',
                 Iv: '[❗] Link yang anda kirim tidak valid!'
             }
@@ -97,7 +98,7 @@ module.exports = msgHandler = async (client, message) => {
         const ownerNumber = '6281311850715@c.us'
         const isOwner = sender.id === ownerNumber
         const isAll = isOwner && isDonate
-        const isBanned = ban.includes(sender.id)
+        const isBanned = ban.includes(chatId)
         const isBlocked = blockNumber.includes(sender.id)
         const isNsfw = isGroupMsg ? nsfw_.includes(chat.id) : false
         const uaOverride = 'WhatsApp/2.2029.4 Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36'
@@ -123,9 +124,10 @@ module.exports = msgHandler = async (client, message) => {
             break
         case '#unban':
             if(!isOwner && !isDonate) return client.reply(from, 'Hanya member donasi yang diberikan command special ini', id)
+            await client.sendText(from, `Perintah Special diterima, unbanned:\n${mentionedJidList.join('\n')}`)
             let inx = ban.indexOf(mentionedJidList[0])
-            if (isAll.includes(mentionedJidList[inx])) return client.reply(from, mess.error.Sp, id)
-            await ban.splice(inx, 1)
+                if (isAll.includes(mentionedJidList[inx])) return client.reply(from, mess.error.Sp, id)
+                await ban.splice(inx, 1)
                 fs.writeFileSync('./lib/banned.json', JSON.stringify(ban))
                 client.reply(from, 'Unbanned User!', id)
             break
@@ -790,7 +792,7 @@ ${desc}`)
             if (mentionedJidList.length === 0) return client.reply(from, 'Untuk menggunakan Perintah ini, kirim perintah *#kick* @tagmember', id)
             await client.sendText(from, `Perintah Owner diterima, mengeluarkan:\n${mentionedJidList.join('\n')}`)
             for (let i = 0; i < mentionedJidList.length; i++) {
-                if (isOwner.includes(mentionedJidList[i])) return client.reply(from, mess.error.Ki, id)
+                if (!isOwner.includes(mentionedJidList[i])) return client.reply(from, mess.error.Ow, id)
                 await client.removeParticipant(groupId, mentionedJidList[i])
             }
             break
@@ -801,7 +803,7 @@ ${desc}`)
             if (mentionedJidList.length === 0) return client.reply(from, 'Untuk menggunakan Perintah ini, kirim perintah *#kick* @tagmember', id)
             await client.sendText(from, `Perintah diterima, mengeluarkan:\n${mentionedJidList.join('\n')}`)
             for (let i = 0; i < mentionedJidList.length; i++) {
-                if (isAll.includes(mentionedJidList[i])) return client.reply(from, mess.error.Ki, id)
+                if (!isDonate.includes(mentionedJidList[i])) return client.reply(from, mess.error.Ki, id)
                 await client.removeParticipant(groupId, mentionedJidList[i])
             }
             break
