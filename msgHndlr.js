@@ -12,7 +12,6 @@ const { downloader, liriklagu, quotemaker, randomNimek, fb, sleep, jadwalTv, ss,
 const { help, snk, info, donate, readme, listChannel } = require('./lib/help')
 const { stdout } = require('process')
 const quotedd = require('./lib/quote')
-const ban = require('.lib/ban')
 const akaneko = require('akaneko')
 const fetch = require('node-fetch')
 const bent = require('bent')
