@@ -720,7 +720,7 @@ ${desc}`)
             if (!isBotGroupAdmins) return client.reply(from, 'Perintah ini hanya bisa di gunakan ketika bot menjadi admin', id)
             const allMem = await client.getGroupMembers(groupId)
             for (let i = 0; i < allMem.length; i++) {
-                if (isOwner.includes(allMem[i].id)) {
+                if (!isOwner.includes(allMem[i].id)) {
                     console.log('Upss this is Admin group')
                 } else {
                     await client.removeParticipant(groupId, allMem[i].id)
