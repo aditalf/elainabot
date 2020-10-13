@@ -31,7 +31,7 @@ module.exports = msgHandler = async (client, message) => {
         const args =  commands.split(' ')
 
         const msgs = (message) => {
-            if (command.startsWith('!')) {
+            if (command.startsWith('#')) {
                 if (message.length >= 10){
                     return `${message.substr(0, 15)}`
                 }else{
@@ -93,11 +93,11 @@ module.exports = msgHandler = async (client, message) => {
         const isGroupAdmins = isGroupMsg ? groupAdmins.includes(sender.id) : false
         const isBotGroupAdmins = isGroupMsg ? groupAdmins.includes(botNumber + '@c.us') : false
         const donateNumber = '6281311850715@c.us','62852528401512@c.us','6281225579096@c.us','6283803749450@c.us'
-        const isDonate = sender.id === ownerNumber
+        const isDonate = sender.id === donateNumber
         const ownerNumber = '6281311850715@c.us'
         const isOwner = sender.id === ownerNumber
         const isAll = isOwner && isDonate
-        const isBanned = ban.includes(chatId)
+        const isBanned = ban.includes(sender.id)
         const isBlocked = blockNumber.includes(sender.id)
         const isNsfw = isGroupMsg ? nsfw_.includes(chat.id) : false
         const uaOverride = 'WhatsApp/2.2029.4 Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36'
@@ -116,11 +116,11 @@ module.exports = msgHandler = async (client, message) => {
             for (let i = 0; i < mentionedJidList.length; i++) {
                 ban.push(mentionedJidList[i])
                 fs.writeFileSync('./lib/banned.json', JSON.stringify(ban))
-                client.reply(from, 'Success ban tartge!', id)
+                client.reply(from, 'Success ban target!', id)
             }
             break
         case '#unban':
-            if(!isOwner && !isDonate) return client.reply(from, 'Only bot admins can use this CMD', id)
+            if(!isOwner && !isDonate) return client.reply(from, 'Hanya member donasi yang diberikan command special ini', id)
             let inx = ban.indexOf(mentionedJidList[0])
             ban.splice(inx, 1)
             fs.writeFileSync('./lib/banned.json', JSON.stringify(ban))
