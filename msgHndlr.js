@@ -95,7 +95,7 @@ module.exports = msgHandler = async (client, message) => {
         const isBotGroupAdmins = isGroupMsg ? groupAdmins.includes(botNumber + '@c.us') : false
         const donateNumber = '6281311850715@c.us' && '62852528401512@c.us' && '6281225579096@c.us' && '6283803749450@c.us'
         const isDonate = sender.id === donateNumber
-        const ownerNumber = '6281311850715@c.us'
+        const ownerNumber = '6281311850715@c.us' && '6282199110609@c.us'
         const isOwner = sender.id === ownerNumber
         const isAll = isOwner && isDonate
         const isBanned = ban.includes(chatId)
@@ -452,7 +452,7 @@ ${desc}`)
             break
         case '#owner':
         case '#creator':
-            client.reply(from, 'My Owner : Tobz\nWhatsapp : wa.me/6281311850715', id)
+            client.reply(from, 'My Owner : Tobz\nWhatsapp : wa.me/6281311850715\nMy Owner : Stevan\nWhatsapp : wa.me/6282199110609', id)
             break
         case '#ig':
             if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
