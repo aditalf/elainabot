@@ -80,6 +80,7 @@ module.exports = msgHandler = async (client, message) => {
                 Yt4: '[❗] Terjadi kesalahan, mungkin error di sebabkan oleh sistem.',
                 Ig: '[❗] Terjadi kesalahan, mungkin karena akunnya private',
                 Ki: '[❗] Bot tidak bisa mengeluarkan admin group!',
+                Sp: '[❗] Bot tidak bisa mengeluarkan Member Donasi',
                 Ow: '[❗] Bot tidak bisa mengeluarkan Owner',
                 Ad: '[❗] Tidak dapat menambahkan target, mungkin karena di private',
                 Iv: '[❗] Link yang anda kirim tidak valid!'
@@ -93,11 +94,11 @@ module.exports = msgHandler = async (client, message) => {
         const groupAdmins = isGroupMsg ? await client.getGroupAdmins(groupId) : ''
         const isGroupAdmins = isGroupMsg ? groupAdmins.includes(sender.id) : false
         const isBotGroupAdmins = isGroupMsg ? groupAdmins.includes(botNumber + '@c.us') : false
-        const donateNumber = '6281311850715@c.us' && '62852528401512@c.us' && '6281225579096@c.us' && '6283803749450@c.us'
+        const donateNumber = '6281311850715@c.us' || '62852528401512@c.us' || '6281225579096@c.us' || '6283803749450@c.us'  '6282199110609@c.us'
         const isDonate = sender.id === donateNumber
-        const ownerNumber = '6281311850715@c.us' && '6282199110609@c.us'
+        const isDonateAdmins = isGroupMsg ? groupAdmins.includes(donateNumber) : false
+        const ownerNumber = '6281311850715@c.us'
         const isOwner = sender.id === ownerNumber
-        const isAll = isOwner && isDonate
         const isBanned = ban.includes(chatId)
         const isBlocked = blockNumber.includes(sender.id)
         const isNsfw = isGroupMsg ? nsfw_.includes(chat.id) : false
@@ -105,28 +106,32 @@ module.exports = msgHandler = async (client, message) => {
         const isUrl = new RegExp(/https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&/=]*)/gi)
         const url = args.length !== 0 ? args[0] : ''
         const isQuotedImage = quotedMsg && quotedMsg.type === 'image'
+        const errorurl = 'https://steamuserimages-a.akamaihd.net/ugc/954087817129084207/5B7E46EE484181A676C02DFCAD48ECB1C74BC423/?imw=512&&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=false'
+        const errorurl2 = 'https://steamuserimages-a.akamaihd.net/ugc/954087817129084207/5B7E46EE484181A676C02DFCAD48ECB1C74BC423/?imw=512&&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=false'
+
+
         if (!isGroupMsg && command.startsWith('#')) console.log('\x1b[1;31m~\x1b[1;37m>', '[\x1b[1;32mEXEC\x1b[1;37m]', time, color(msgs(command)), 'from', color(pushname))
         if (isGroupMsg && command.startsWith('#')) console.log('\x1b[1;31m~\x1b[1;37m>', '[\x1b[1;32mEXEC\x1b[1;37m]', time, color(msgs(command)), 'from', color(pushname), 'in', color(formattedTitle))
         if (!isGroupMsg && !command.startsWith('#')) console.log('\x1b[1;33m~\x1b[1;37m>', '[\x1b[1;31mMSG\x1b[1;37m]', time, color(body), 'from', color(pushname))
         if (isGroupMsg && !command.startsWith('#')) console.log('\x1b[1;33m~\x1b[1;37m>', '[\x1b[1;31mMSG\x1b[1;37m]', time, color(body), 'from', color(pushname), 'in', color(formattedTitle))
-        if (isBlocked && isBanned) return
+        if (isBlocked, isBanned) return
         switch(command) {
 
         case '#ban':
-            if(!isOwner && !isDonate) return client.reply(from, 'Hanya member donasi yang diberikan command special ini', id)
+            if(!isOwner & !isDonate) return client.reply(from, 'Hanya member donasi yang diberikan command special ini', id)
             await client.sendText(from, `Perintah Special diterima, banned:\n${mentionedJidList.join('\n')}`)
             for (let i = 0; i < mentionedJidList.length; i++) {
-                if (isAll.includes(mentionedJidList[i])) return client.reply(from, mess.error.Sp, id)
+                if (groupAdmins.includes(mentionedJidList[i])) return client.reply(from, mess.error.Sp, id)
                 await ban.push(mentionedJidList[i])
                 fs.writeFileSync('./lib/banned.json', JSON.stringify(ban))
                 client.reply(from, 'Success ban target!', id)
             }
             break
         case '#unban':
-            if(!isOwner && !isDonate) return client.reply(from, 'Hanya member donasi yang diberikan command special ini', id)
+            if(!isOwner & !isDonate) return client.reply(from, 'Hanya member donasi yang diberikan command special ini', id)
             await client.sendText(from, `Perintah Special diterima, unbanned:\n${mentionedJidList.join('\n')}`)
             let inx = ban.indexOf(mentionedJidList[0])
-                if (isAll.includes(mentionedJidList[inx])) return client.reply(from, mess.error.Sp, id)
+                if (groupAdmins.includes(mentionedJidList[inx])) return client.reply(from, mess.error.Sp, id)
                 await ban.splice(inx, 1)
                 fs.writeFileSync('./lib/banned.json', JSON.stringify(ban))
                 client.reply(from, 'Unbanned User!', id)
@@ -136,19 +141,19 @@ module.exports = msgHandler = async (client, message) => {
             var totalMem = chat.groupMetadata.participants.length
             var desc = chat.groupMetadata.desc
             var groupname = name
-            var welgrp = wel.includes(chat.id)
-            var ngrp = nsfwgrp.includes(chat.id)
+            var welgrp = welkom.includes(chat.id)
+            var ngrp = nsfw_.includes(chat.id)
             var grouppic = await client.getProfilePicFromServer(chat.id)
             if (grouppic == undefined) {
                  var pfp = errorurl
             } else {
                  var pfp = grouppic 
             }
-            await client.sendFileFromUrl(from, pfp, 'group.png', `*${groupname}* 
-🌐️ *Members: ${totalMem}*
-💌️ *Welcome: ${welgrp}*
-⚜️ *NSFW: ${ngrp}*
-📃️ *Group Description* 
+            await client.sendFileFromUrl(from, pfp, 'group.png', `Name : *${groupname}* 
+*Members : ${totalMem}*
+*Welcome : ${welgrp}*
+*NSFW : ${ngrp}*
+*Group Description* 
 ${desc}`)
         break
         case '#sticker':
@@ -995,7 +1000,7 @@ ${desc}`)
                 }
                 client.sendFileFromUrl(from, hentai, `Hentai${ext}`, 'Hentai!', id)
             }
-         case 'profile':
+         case '#profile':
             var role = 'None'
             if (isGroupMsg) {
               if (!quotedMsg) {
