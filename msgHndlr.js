@@ -82,6 +82,7 @@ module.exports = msgHandler = async (client, message) => {
                 Ki: '[❗] Bot tidak bisa mengeluarkan admin group!',
                 Sp: '[❗] Bot tidak bisa mengeluarkan Member Donasi',
                 Ow: '[❗] Bot tidak bisa mengeluarkan Owner',
+                Bk: '[❗] Bot tidak bisa memblockir Owner',
                 Ad: '[❗] Tidak dapat menambahkan target, mungkin karena di private',
                 Iv: '[❗] Link yang anda kirim tidak valid!'
             }
@@ -94,11 +95,11 @@ module.exports = msgHandler = async (client, message) => {
         const groupAdmins = isGroupMsg ? await client.getGroupAdmins(groupId) : ''
         const isGroupAdmins = isGroupMsg ? groupAdmins.includes(sender.id) : false
         const isBotGroupAdmins = isGroupMsg ? groupAdmins.includes(botNumber + '@c.us') : false
-        const donateNumber = '6281311850715@c.us' & '62852528401512@c.us' & '6281225579096@c.us' & '6283803749450@c.us' & '6282199110609@c.us'
-        const isDonate = sender.id === donateNumber
+        const donateNumber = ['6281311850715', '62852528401512', '6281225579096', '6283803749450', '6282199110609@']
+        const isDonate = donateNumber+'@c.us' == sender.id 
         const isDonateAdmins = isGroupMsg ? groupAdmins.includes(donateNumber) : false
-        const ownerNumber = '6281311850715@c.us'
-        const isOwner = sender.id === ownerNumber
+        const ownerNumber = '6281311850715'
+        const isOwner = ownerNumber+'@c.us' == sender.id 
         const isBanned = ban.includes(chatId)
         const isBlocked = blockNumber.includes(sender.id)
         const isNsfw = isGroupMsg ? nsfw_.includes(chat.id) : false
@@ -114,27 +115,24 @@ module.exports = msgHandler = async (client, message) => {
         if (isGroupMsg && command.startsWith('#')) console.log('\x1b[1;31m~\x1b[1;37m>', '[\x1b[1;32mEXEC\x1b[1;37m]', time, color(msgs(command)), 'from', color(pushname), 'in', color(formattedTitle))
         if (!isGroupMsg && !command.startsWith('#')) console.log('\x1b[1;33m~\x1b[1;37m>', '[\x1b[1;31mMSG\x1b[1;37m]', time, color(body), 'from', color(pushname))
         if (isGroupMsg && !command.startsWith('#')) console.log('\x1b[1;33m~\x1b[1;37m>', '[\x1b[1;31mMSG\x1b[1;37m]', time, color(body), 'from', color(pushname), 'in', color(formattedTitle))
-        if (isBlocked, isBanned) return
+        if (isBlocked) return
         switch(command) {
 
-        case '#ban':
-            if(!isOwner & !isDonate) return client.reply(from, 'Hanya member donasi yang diberikan command special ini', id)
-            await client.sendText(from, `Perintah Special diterima, banned:\n${mentionedJidList.join('\n')}`)
+        case '#block':
+            if(!isOwner) return client.reply(from, 'Hanya Owner yang bisa menjalankan perintah ini', id)
+            await client.sendText(from, `Perintah Owner diterima, blockir:\n${mentionedJidList.join('\n')}`)
             for (let i = 0; i < mentionedJidList.length; i++) {
-                if (groupAdmins.includes(mentionedJidList[i])) return client.reply(from, mess.error.Sp, id)
-                await ban.push(mentionedJidList[i])
-                fs.writeFileSync('./lib/banned.json', JSON.stringify(ban))
-                client.reply(from, 'Success ban target!', id)
+                if (!isOwner.includes(mentionedJidList[i])) return client.reply(from, mess.error.Bk, id)
+                await client.contactBlock(from, mentionedJidList[i])
             }
             break
-        case '#unban':
-            if(!isOwner & !isDonate) return client.reply(from, 'Hanya member donasi yang diberikan command special ini', id)
-            await client.sendText(from, `Perintah Special diterima, unbanned:\n${mentionedJidList.join('\n')}`)
-            let inx = ban.indexOf(mentionedJidList[0])
-                if (groupAdmins.includes(mentionedJidList[inx])) return client.reply(from, mess.error.Sp, id)
-                await ban.splice(inx, 1)
-                fs.writeFileSync('./lib/banned.json', JSON.stringify(ban))
-                client.reply(from, 'Unbanned User!', id)
+        case '#unblock':
+            if(!isOwner) return client.reply(from, 'Hanya member donasi yang diberikan command special ini', id)
+            await client.sendText(from, `Perintah Owner diterima, membuka blockir:\n${mentionedJidList.join('\n')}`)
+            for (let i = 0; i < mentionedJidList.length; i++) {
+                if (!isOwner.includes(mentionedJidList[i])) return client.reply(from, mess.error.Bk, id)
+                await client.contactUnblock(from, mentionedJidList[i])
+            }
             break
         case '#groupinfo' :
             if (!isGroupMsg) return client.reply(from, '.', message.id) 
@@ -534,13 +532,38 @@ ${desc}`)
             const hasil = `*${waktu}*\n📍 *Lokasi* : *${lokasi}*\n〽️ *Kedalaman* : *${kedalaman}*\n💢 *Magnitude* : *${magnitude}*\n🔘 *Potensi* : *${potensi}*\n📍 *Koordinat* : *${koordinat}*`
             client.sendFileFromUrl(from, map, 'shakemap.jpg', hasil, id)
             break
-        case '#anime':
+        // ANIME //
+        case '#otakudesu':
             if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
-            if (args.length === 1) return client.reply(from, 'Kirim perintah *#anime [query]*\nContoh : *#anime darling in the franxx*', id)
+            if (args.length === 1) return client.reply(from, 'Kirim perintah *#otakudesu [query]*\nContoh : *#otakudesu darling in the franxx*', id)
+            const animes = await get.get('https://mhankbarbar.herokuapp.com/api/otakudesu?q=' + body.slice(7)).json()
+            if (animes.error) return client.reply(from, animes.error, id)
+            const res_animes = `${animes.title}\n\n${animes.info}\n\n${animes.sinopsis}`
+            client.sendFileFromUrl(from, animes.thumb, 'otakudesu.jpg', res_animes, id)
+            break
+        case '#kusonime':
+            if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
+            if (args.length === 1) return client.reply(from, 'Kirim perintah *#kusonime [query]*\nContoh : *#kusonime darling in the franxx*', id)
+            const animeq = await get.get('https://mhankbarbar.herokuapp.com/api/kuso?q=' + body.slice(7)).json()
+            if (animeq.error) return client.reply(from, animeq.error, id)
+            const res_animeq = `${animeq.title}\n\n${animeq.info}\n\n${animeq.sinopsis}\n\n${animeq.link_dl}`
+            client.sendFileFromUrl(from, animeq.thumb, 'kusonime.jpg', res_animeq, id)
+            break
+        case '#dewabatch':
+            if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
+            if (args.length === 1) return client.reply(from, 'Kirim perintah *#dewabatch [query]*\nContoh : *#dewabatch darling in the franxx*', id)
             const animek = await get.get('https://mhankbarbar.herokuapp.com/api/dewabatch?q=' + body.slice(7)).json()
             if (animek.error) return client.reply(from, animek.error, id)
             const res_animek = `${animek.result}\n\n${animek.sinopsis}`
             client.sendFileFromUrl(from, animek.thumb, 'dewabatch.jpg', res_animek, id)
+            break
+        case '#komiku':
+            if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
+            if (args.length === 1) return client.reply(from, 'Kirim perintah *#komiku [query]*\nContoh : *#komiku darling in the franxx*', id)
+            const animep = await get.get('https://mhankbarbar.herokuapp.com/api/komiku?q=' + body.slice(7)).json()
+            if (animep.error) return client.reply(from, animep.error, id)
+            const res_animep = `${animep.info}\n\n${animep.sinopsis}\n\n${animep.link_dl}`
+            client.sendFileFromUrl(from, animep.thumb, 'komiku.jpg', res_animep, id)
             break
         case '#nhentai':
         case '#nh':
