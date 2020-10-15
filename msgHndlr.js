@@ -936,7 +936,7 @@ ${desc}`)
             if (mentionedJidList.length === 0) return client.reply(from, 'Untuk menggunakan Perintah ini, kirim perintah *#kick* @tagmember', id)
             await client.sendText(from, `Perintah diterima, mengeluarkan:\n${mentionedJidList.join('\n')}`)
             for (let i = 0; i < mentionedJidList.length; i++) {
-                if (adminNumber.includes(mentionedJidList[i])) return client.reply(from, mess.error.Sp, id)
+                if (groupAdmins.includes(mentionedJidList[i])) return client.reply(from, mess.error.Sp, id)
                 await client.removeParticipant(groupId, mentionedJidList[i])
             }
             break
