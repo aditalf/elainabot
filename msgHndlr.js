@@ -18,7 +18,6 @@ const quotedd = require('./lib/quote')
 const nsfw_ = JSON.parse(fs.readFileSync('./lib/NSFW.json'))
 const welkom = JSON.parse(fs.readFileSync('./lib/welcome.json'))
 const ban = JSON.parse(fs.readFileSync('./lib/banned.json'))
-const sendSticker = require('./lib/sendSticker')
 const bent = require('bent')
 var request = require('request');
 
