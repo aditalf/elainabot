@@ -2,20 +2,25 @@ const { decryptMedia } = require('@open-wa/wa-decrypt')
 const fs = require('fs-extra')
 const axios = require('axios')
 const moment = require('moment-timezone')
+moment.tz.setDefault('Asia/Jakarta').locale('id')
+const nrc = require('node-run-cmd')
 const os = require('os')
 const get = require('got')
 const color = require('./lib/color')
+const fetch = require('node-fetch')
 const { spawn, exec } = require('child_process')
 const nhentai = require('nhentai-js')
 const { API } = require('nhentai-api')
-const { downloader, liriklagu, quotemaker, randomNimek, fb, sleep, jadwalTv, ss, msgFilter, processTime, meme } = require('./lib/functions')
+const { downloader, liriklagu, quotemaker, randomNimek, fb, sleep, jadwalTv, ss, msgFilter, processTime, custom, uploadImages } = require('./lib/functions')
 const { help, snk, info, donate, readme, listChannel } = require('./lib/help')
 const { stdout } = require('process')
 const quotedd = require('./lib/quote')
 const nsfw_ = JSON.parse(fs.readFileSync('./lib/NSFW.json'))
 const welkom = JSON.parse(fs.readFileSync('./lib/welcome.json'))
 const ban = JSON.parse(fs.readFileSync('./lib/banned.json'))
-const { uploadImages } = require('./lib/fetcher')
+const sendSticker = require('./lib/sendSticker')
+const bent = require('bent')
+var request = require('request');
 
 moment.tz.setDefault('Asia/Jakarta').locale('id')
 
@@ -79,8 +84,8 @@ module.exports = msgHandler = async (client, message) => {
                 Yt3: '[❗] Terjadi kesalahan, tidak dapat meng konversi ke mp3!',
                 Yt4: '[❗] Terjadi kesalahan, mungkin error di sebabkan oleh sistem.',
                 Ig: '[❗] Terjadi kesalahan, mungkin karena akunnya private',
-                Ki: '[❗] Bot tidak bisa mengeluarkan admin group!',
-                Sp: '[❗] Bot tidak bisa mengeluarkan Member Donasi',
+                Ki: '[❗] Bot tidak bisa mengeluarkan Admin group!',
+                Sp: '[❗] Bot tidak bisa mengeluarkan Admin',
                 Ow: '[❗] Bot tidak bisa mengeluarkan Owner',
                 Bk: '[❗] Bot tidak bisa memblockir Owner',
                 Ad: '[❗] Tidak dapat menambahkan target, mungkin karena di private',
@@ -95,11 +100,12 @@ module.exports = msgHandler = async (client, message) => {
         const groupAdmins = isGroupMsg ? await client.getGroupAdmins(groupId) : ''
         const isGroupAdmins = isGroupMsg ? groupAdmins.includes(sender.id) : false
         const isBotGroupAdmins = isGroupMsg ? groupAdmins.includes(botNumber + '@c.us') : false
-        const donateNumber = ['6281311850715', '62852528401512', '6281225579096', '6283803749450', '6282199110609@']
-        const isDonate = donateNumber+'@c.us' == sender.id 
-        const isDonateAdmins = isGroupMsg ? groupAdmins.includes(donateNumber) : false
-        const ownerNumber = '6281311850715'
-        const isOwner = ownerNumber+'@c.us' == sender.id 
+
+        const adminNumber = ['6281311850715@c.us','6281225579096@c.us','6283803749450@c.us','6282112426773@c.us','6282199110609@c.us','6287821691881@c.us','6282130509360@c.us'] 
+        const isAdmin = adminNumber.includes(sender.id)
+        const ownerNumber = ['6281311850715@c.us']
+        const isOwner = ownerNumber.includes(sender.id)
+        
         const isBanned = ban.includes(chatId)
         const isBlocked = blockNumber.includes(sender.id)
         const isNsfw = isGroupMsg ? nsfw_.includes(chat.id) : false
@@ -118,24 +124,26 @@ module.exports = msgHandler = async (client, message) => {
         if (isBlocked) return
         switch(command) {
 
-        case '#block':
-            if(!isOwner) return client.reply(from, 'Hanya Owner yang bisa menjalankan perintah ini', id)
-            await client.sendText(from, `Perintah Owner diterima, blockir:\n${mentionedJidList.join('\n')}`)
-            for (let i = 0; i < mentionedJidList.length; i++) {
-                if (!isOwner.includes(mentionedJidList[i])) return client.reply(from, mess.error.Bk, id)
-                await client.contactBlock(from, mentionedJidList[i])
-            }
+            case '#ban':
+            if (!isGroupMsg) return client.reply(from, 'Fitur ini hanya bisa di gunakan dalam group', id)
+            if (!isGroupAdmins) return client.reply(from, 'Fitur ini hanya bisa di gunakan oleh admin group', id)
+            if (!isBotGroupAdmins) return client.reply(from, 'Fitur ini hanya bisa di gunakan ketika bot menjadi admin', id)
+            if (mentionedJidList.length === 0) return client.reply(from, 'Untuk menggunakan fitur ini, kirim perintah *#promote* @tagmember', id)
+            if (mentionedJidList.length >= 2) return client.reply(from, 'Maaf, perintah ini hanya dapat digunakan kepada 1 user.', id)
+            if (groupAdmins.includes(mentionedJidList[0])) return client.reply(from, 'Maaf, user tersebut sudah menjadi admin.', id)
+            await client.contactBlock(groupId, mentionedJidList[0])
+            await client.sendTextWithMentions(from, `Perintah diterima, menambahkan @${mentionedJidList[0]} sebagai admin.`)
             break
         case '#unblock':
             if(!isOwner) return client.reply(from, 'Hanya member donasi yang diberikan command special ini', id)
             await client.sendText(from, `Perintah Owner diterima, membuka blockir:\n${mentionedJidList.join('\n')}`)
             for (let i = 0; i < mentionedJidList.length; i++) {
-                if (!isOwner.includes(mentionedJidList[i])) return client.reply(from, mess.error.Bk, id)
+                if (groupAdmins.includes(mentionedJidList[i])) return client.reply(from, mess.error.Bk, id)
                 await client.contactUnblock(from, mentionedJidList[i])
             }
             break
         case '#groupinfo' :
-            if (!isGroupMsg) return client.reply(from, '.', message.id) 
+            if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', message.id)
             var totalMem = chat.groupMetadata.participants.length
             var desc = chat.groupMetadata.desc
             var groupname = name
@@ -147,14 +155,14 @@ module.exports = msgHandler = async (client, message) => {
             } else {
                  var pfp = grouppic 
             }
-            await client.sendFileFromUrl(from, pfp, 'group.png', `Name : *${groupname}* 
-*Members : ${totalMem}*
-*Welcome : ${welgrp}*
-*NSFW : ${ngrp}*
-*Group Description* 
+            await client.sendFileFromUrl(from, pfp, 'group.png', `➸ *Name : ${groupname}* 
+*➸ Members : ${totalMem}*
+*➸ Welcome : ${welgrp}*
+*➸ NSFW : ${ngrp}*
+*➸ Group Description* 
 ${desc}`)
         break
-        case '#sticker':
+       case '#sticker':
         case '#stiker':
             if (isMedia && type === 'image') {
                 const mediaData = await decryptMedia(message, uaOverride)
@@ -194,6 +202,20 @@ ${desc}`)
                 )
             }
             break
+         case '#textmaker':
+                arg = body.trim().split('|')
+                if ((isMedia || isQuotedImage) && arg.length >= 2) {
+                const top = arg[1]
+                const bottom = arg[2]
+                const encryptMedia = isQuotedImage ? quotedMsg : message
+                const mediaData = await decryptMedia(encryptMedia, uaOverride)
+                const getUrl = await uploadImages(mediaData, false)
+                const ImageBase64 = await custom(getUrl, top, bottom)
+                await client.sendFile(from, ImageBase64, 'image.png', '', '...', true)
+                } else {
+                await client.reply(from, 'Wrong Format!', id)
+                }
+                break
         case '#quoterandom' :
         case '#quote' :
             if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
@@ -225,15 +247,19 @@ ${desc}`)
                             }
                         }else{
                             axios.get('https://animechanapi.xyz/api/quotes/random').then(({ data }) => {
-                                let quote = data.data[0].quote 
-                                let char = data.data[0].character
-                                let anime = data.data[0].anime
+                                let penyanyi = data.result[0].penyanyi 
+                                let judul = data.result[0].judul
+                                let linkimg = data.result[0].linkImg
+                                let lagu = data.result[0].linkMp3 
+                                let size = data.result[0].filesize
+                                let durasi = data.result[0].duration
                                 client.sendText(from, `"${quote}"\n\nCharacter : ${char}\nAnime : ${anime}`)                               
                             }).catch(err => {
                                 console.log(err)
                             })
                         }
             break
+
         case '#tts':
             if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
             if (args.length === 1) return client.reply(from, 'Kirim perintah *#tts* [id, en, jp, ar, ru, ko] [teks], contoh *#tts* id halo semua')
@@ -460,16 +486,16 @@ ${desc}`)
         case '#ig':
             if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
             if (args.length === 1) return client.reply(from, 'Kirim perintah *#ig [linkIg]* untuk contoh silahkan kirim perintah *#readme*')
-            if (!args[1].match(isUrl) && !args[1].includes('instagram.com')) return client.reply(from, mess.error.Iv, id)
+            if (!args[1].match(isUrl) && !args[1].includes('instagram.com')) return client.reply(from, mess.error.Ig, id)
             try {
                 client.reply(from, mess.wait, id)
-                const resp = await get.get('https://mhankbarbar.herokuapp.com/api/ig?url='+ args[1]).json()
-                if (resp.result.includes('.mp4')) {
+                const resp = await get.get('https://api.vhtear.com/instadl?link='+ args[1] + '&apikey=').json()
+                if (resp.result.urlDownload.includes('.mp4')) {
                     var ext = '.mp4'
                 } else {
                     var ext = '.jpg'
                 }
-                await client.sendFileFromUrl(from, resp.result, `igeh${ext}`, '', id)
+                await client.sendFileFromUrl(from, resp.result.urlDownload, `igeh${ext}`, '',  id)
             } catch {
                 client.reply(from, mess.error.Ig, id)
                 }
@@ -508,7 +534,7 @@ ${desc}`)
             break
         case '#donasimenu':
             if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
-            if (!isDonate) return client.reply(from, 'Perintah ini hanya bisa di gunakan oleh Member Donasi!', id)
+            if (!isAdmin) return client.reply(from, 'Perintah ini hanya bisa di gunakan oleh Admin!', id)
             client.reply(from, '1. #banned [tag]\n2. #unbanned [@tag]', id)
             break
         case '#nsfwmenu':
@@ -565,6 +591,86 @@ ${desc}`)
             const res_animep = `${animep.info}\n\n${animep.sinopsis}\n\n${animep.link_dl}`
             client.sendFileFromUrl(from, animep.thumb, 'komiku.jpg', res_animep, id)
             break
+        case '#myanimelist':
+            if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
+            const keyword = message.body.replace('#myanimelist', '')
+            try {
+            const data = await fetch(
+           `https://api.jikan.moe/v3/search/anime?q=${keyword}`
+            )
+            const parsed = await data.json()
+            if (!parsed) {
+              await client.sendFileFromUrl(from, errorurl2, 'error.png', '💔️ Maaf, Anime tidak ditemukan', id)
+              return null
+              }
+            const { title, synopsis, episodes, url, rated, score, image_url } = parsed.results[0]
+            const content = `*Anime Ditemukan!*
+✨️ *Title:* ${title}
+🎆️ *Episodes:* ${episodes}
+💌️ *Rating:* ${rated}
+❤️ *Score:* ${score}
+💚️ *Synopsis:* ${synopsis}
+🌐️ *URL*: ${url}`
+
+            const image = await bent("buffer")(image_url)
+            const base64 = `data:image/jpg;base64,${image.toString("base64")}`
+            client.sendImage(from, base64, title, content)
+           } catch (err) {
+             console.error(err.message)
+             await client.sendFileFromUrl(from, errorurl2, 'error.png', '💔️ Maaf, Anime tidak ditemukan')
+           }
+          break
+        case '#covid':
+            arg = body.trim().split(' ')
+            console.log(...arg[1])
+            var slicedArgs = Array.prototype.slice.call(arg, 1);
+            console.log(slicedArgs)
+            const country = await slicedArgs.join(' ')
+            console.log(country)
+            const response2 = await axios.get('https://coronavirus-19-api.herokuapp.com/countries/' + country + '/')
+            const { cases, todayCases, deaths, todayDeaths, active } = response2.data
+                await client.sendText(from, '🌎️ Covid Info - ' + country + ' 🌍️\n\n✨️ Total Cases: ' + `${cases}` + '\n📆️ Today\'s Cases: ' + `${todayCases}` + '\n☣️ Total Deaths: ' + `${deaths}` + '\n☢️ Today\'s Deaths: ' + `${todayDeaths}` + '\n⛩️ Active Cases: ' + `${active}` + '.')
+            break
+        case '#spamcall':
+            if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
+            if (!isOwner, !isAdmin) return client.reply(from, 'Perintah ini hanya untuk Owner & Admin bot', id)
+            if (args.length === 1) return client.reply(from, 'Kirim perintah *#spamcall [query]*\nContoh : *#spamcall 81327482731 (tidak usah memakai angka 0 didepan)*', id)
+            const call = await get.get('https://mhankbarbar.herokuapp.com/api/spamcall?no=' + body.slice(7)).json()
+            if (call.error) return client.reply(from, animep.error, id)
+            const res_call = `Logs : ${call.logs}`
+            client.sendFileFromUrl(from, res_call, id)
+            break
+        case '#tiktokstalk':
+            if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
+            const tkeyword = message.body.replace('#tiktokstalk', '')
+            try {
+            const data = await axios(
+           `https://api.vhtear.com/tiktokprofile?query=${tkeyword}&apikey=Tobz2k19`
+            )
+            const parsed = await data.json()
+            if (!parsed) {
+              await client.sendFileFromUrl(from, errorurl2, 'error.png', '💔️ Maaf, User tidak ditemukan', id)
+              return null
+              }
+            const { username, title, bio, follow, follower, like_count, video_post, description, picture, url_account } = parsed.results[0]
+            const tiktod = `*User Ditemukan!*
+➸ *Username:* ${username}
+➸ *Judul:* ${title}
+➸ *Bio:* ${bio}
+➸ *Mengikuti:* ${follow}
+➸ *Pengikut:* ${follower}
+➸ *Jumlah Like*: ${line_count}
+➸ *Jumlah Postingan:* ${username}
+➸ *Deskripsi:* ${deskripsi}`
+
+            const pictk = await bent("buffer")(picture)
+            const base64 = `data:image/jpg;base64,${pictk.toString("base64")}`
+            client.sendImage(from, base64, title, tiktod)
+           } catch (err) {
+             console.error(err.message)
+             await client.sendFileFromUrl(from, errorurl2, 'error.png', '💔️ Maaf, User tidak ditemukan')
+           }
+          break
         case '#nhentai':
         case '#nh':
             if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
@@ -748,7 +854,7 @@ ${desc}`)
             if (!isBotGroupAdmins) return client.reply(from, 'Perintah ini hanya bisa di gunakan ketika bot menjadi admin', id)
             const allMem = await client.getGroupMembers(groupId)
             for (let i = 0; i < allMem.length; i++) {
-                if (!isOwner.includes(allMem[i].id)) {
+                if (ownerNumber.includes(allMem[i].id)) {
                     console.log('Upss this is Admin group')
                 } else {
                     await client.removeParticipant(groupId, allMem[i].id)
@@ -763,7 +869,7 @@ ${desc}`)
             if (!isBotGroupAdmins) return client.reply(from, 'Perintah ini hanya bisa di gunakan ketika bot menjadi admin', id)
             const allMek = await client.getGroupMembers(groupId)
             for (let i = 0; i < allMek.length; i++) {
-                if (groupAdmins.includes(allMek[i].id)) {
+                if (adminNumber.includes(allMek[i].id)) {
                     console.log('Upss this is Admin group')
                 } else {
                     await client.removeParticipant(groupId, allMek[i].id)
@@ -793,7 +899,7 @@ ${desc}`)
             const orang = args[1]
             if (!isGroupMsg) return client.reply(from, 'Fitur ini hanya bisa di gunakan dalam group', id)
             if (args.length === 1) return client.reply(from, 'Untuk menggunakan fitur ini, kirim perintah *#add* 628xxxxx', id)
-            if (!isOwner) return client.reply(from, 'Perintah ini hanya untuk Owner bot', id)
+            if (!isOwner, !isAdmin) return client.reply(from, 'Perintah ini hanya untuk Owner & Admin bot', id)
             if (!isBotGroupAdmins) return client.reply(from, 'Perintah ini hanya bisa di gunakan ketika bot menjadi admin', id)
             try {
                 await client.addParticipant(from,`${orang}@c.us`)
@@ -815,12 +921,12 @@ ${desc}`)
             break
         case '#okick':
             if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group', id)
-            if (!isOwner) return client.reply(from, 'Perintah ini hanya untuk Owner bot', id)
+            if (!isOwner, !isAdmin) return client.reply(from, 'Perintah ini hanya untuk Owner & Admin bot', id)
             if (!isBotGroupAdmins) return client.reply(from, 'Perintah ini hanya bisa di gunakan ketika bot menjadi admin', id)
-            if (mentionedJidList.length === 0) return client.reply(from, 'Untuk menggunakan Perintah ini, kirim perintah *#kick* @tagmember', id)
+            if (mentionedJidList.length === 0) return client.reply(from, 'Untuk menggunakan Perintah ini, kirim perintah *#okick* @tagmember', id)
             await client.sendText(from, `Perintah Owner diterima, mengeluarkan:\n${mentionedJidList.join('\n')}`)
             for (let i = 0; i < mentionedJidList.length; i++) {
-                if (!isOwner.includes(mentionedJidList[i])) return client.reply(from, mess.error.Ow, id)
+                if (ownerNumber.includes(mentionedJidList[i])) return client.reply(from, mess.error.Sp, id)
                 await client.removeParticipant(groupId, mentionedJidList[i])
             }
             break
@@ -831,13 +937,13 @@ ${desc}`)
             if (mentionedJidList.length === 0) return client.reply(from, 'Untuk menggunakan Perintah ini, kirim perintah *#kick* @tagmember', id)
             await client.sendText(from, `Perintah diterima, mengeluarkan:\n${mentionedJidList.join('\n')}`)
             for (let i = 0; i < mentionedJidList.length; i++) {
-                if (!isDonate.includes(mentionedJidList[i])) return client.reply(from, mess.error.Ki, id)
+                if (adminNumber.includes(mentionedJidList[i])) return client.reply(from, mess.error.Sp, id)
                 await client.removeParticipant(groupId, mentionedJidList[i])
             }
             break
         case '#oleave':
             if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group', id)
-            if (!isOwner) return client.reply(from, 'Perintah ini hanya untuk Owner bot', id)
+            if (!isOwner, !isAdmin) return client.reply(from, 'Perintah ini hanya untuk Owner & Admin bot', id)
             await client.sendText(from,'MEGUMI DIPERINTAHKAN KELUAR OLEH OWNER!!').then(() => client.leaveGroup(groupId))
             break
         case '#leave':
@@ -847,7 +953,7 @@ ${desc}`)
             break
         case '#opromote':
             if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group', id)
-            if (!isOwner) return client.reply(from, 'Perintah ini hanya untuk Owner bot', id)
+            if (!isOwner, !isAdmin) return client.reply(from, 'Perintah ini hanya untuk Owner & Admin bot', id)
             if (!isBotGroupAdmins) return client.reply(from, 'Fitur ini hanya bisa di gunakan ketika bot menjadi admin', id)
             if (mentionedJidList.length === 0) return client.reply(from, 'Untuk menggunakan fitur ini, kirim perintah *#promote* @tagmember', id)
             if (mentionedJidList.length >= 2) return client.reply(from, 'Maaf, perintah ini hanya dapat digunakan kepada 1 user.', id)
@@ -867,7 +973,7 @@ ${desc}`)
             break
         case '#odemote':
             if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group', id)
-            if (!isOwner) return client.reply(from, 'Perintah ini hanya untuk Owner bot', id)
+            if (!isOwner, !isAdmin) return client.reply(from, 'Perintah ini hanya untuk Owner & Admin bot', id)
             if (!isBotGroupAdmins) return client.reply(from, 'Fitur ini hanya bisa di gunakan ketika bot menjadi admin', id)
             if (mentionedJidList.length === 0) return client.reply(from, 'Untuk menggunakan fitur ini, kirim perintah *#demote* @tagadmin', id)
             if (mentionedJidList.length >= 2) return client.reply(from, 'Maaf, perintah ini hanya dapat digunakan kepada 1 orang.', id)
@@ -904,7 +1010,7 @@ ${desc}`)
             break
         case '#odelete':
             if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group', id)
-            if (!isOwner) return client.reply(from, 'Perintah ini hanya untuk Owner bot', id)
+            if (!isOwner, !isAdmin) return client.reply(from, 'Perintah ini hanya untuk Owner & Admin bot', id)
             if (!quotedMsg) return client.reply(from, 'Salah!!, kirim perintah *#delete [tagpesanbot]*', id)
             if (!quotedMsgObj.fromMe) return client.reply(from, 'Salah!!, Bot tidak bisa mengahpus chat user lain!', id)
             client.deleteMessage(quotedMsgObj.chatId, quotedMsgObj.id, false)
@@ -1032,27 +1138,31 @@ ${desc}`)
               var namae = pushname
               var sts = await client.getStatus(author)
               var adm = isGroupAdmins
+              var donate = isAdmins
               const { status } = sts
                if (pic == undefined) {
                var pfp = errorurl 
                } else {
                var pfp = pic
                } 
-             await client.sendFileFromUrl(from, pfp, 'pfp.jpg', `*User Profile* ✨️ \n\n 🔖️ *Username: ${namae}*\n\n💌️ *User Info: ${status}*\n\n*💔️ Ban: ${block}*\n\n✨️ *Role: ${role}*\n\n 👑️ *Admin: ${adm}*`)
+             await client.sendFileFromUrl(from, pfp, 'pfp.jpg', `*User Profile* ✨️ \n\n➸ *Username: ${namae}*\n\n➸ *User Info: ${status}*\n\n*➸ Ban: ${block}*\n\n➸ *Role: ${role}*\n\n➸ *Admin: ${adm}*\n\n➸ *Special: ${donate}*`)
              } else if (quotedMsg) {
              var qmid = quotedMsgObj.sender.id
-             var block = ban.includes(qmid)
+             var block = blockNumber.includes(qmid)
              var pic = await client.getProfilePicFromServer(qmid)
              var namae = quotedMsgObj.sender.name
              var sts = await client.getStatus(qmid)
              var adm = isGroupAdmins
+             var donate = isAdmins
              const { status } = sts
               if (pic == undefined) {
               var pfp = errorurl 
               } else {
               var pfp = pic
               } 
-             await client.sendFileFromUrl(from, pfp, 'pfo.jpg', `*User Profile* ✨️ \n\n 🔖️ *Username: ${namae}*\n💌️ *User Info: ${status}*\n*💔️ Ban: ${block}*\n✨️ *Role: ${role}*\n 👑️ *Admin: ${adm}*`)
+             await client.sendFi
+
+             leFromUrl(from, pfp, 'pfo.jpg', `**User Profile* ✨️ \n\n➸ *Username: ${namae}*\n\n➸ *User Info: ${status}*\n\n*➸ Ban: ${block}*\n\n➸ *Role: ${role}*\n\n➸ *Admin: ${adm}*\n\n➸ *Special: ${donate}*`)
              }
             }
             break
@@ -1171,6 +1281,7 @@ ${desc}`)
         case '#snk':
             client.reply(from, snk, id)
             break
+
         }
     } catch (err) {
         console.log(color('[ERROR]', 'red'), err)
