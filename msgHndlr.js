@@ -101,7 +101,7 @@ module.exports = msgHandler = async (client, message) => {
         const isGroupAdmins = isGroupMsg ? groupAdmins.includes(sender.id) : false
         const isBotGroupAdmins = isGroupMsg ? groupAdmins.includes(botNumber + '@c.us') : false
 
-        const adminNumber = ['6281311850715@c.us','6281225579096@c.us','6283803749450@c.us','6282112426773@c.us','6282199110609@c.us','6287821691881@c.us','6282130509360@c.us'] 
+        const adminNumber = ['6281311850715@c.us','6281225579096@c.us','6283803749450@c.us','6282112426773@c.us','6282128570120@c.us','6282199110609@c.us','6287821691881@c.us','6282130509360@c.us'] 
         const isAdmin = adminNumber.includes(sender.id)
         const ownerNumber = ['6281311850715@c.us']
         const isOwner = ownerNumber.includes(sender.id)
