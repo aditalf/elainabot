@@ -577,7 +577,7 @@ ${desc}`)
             break
         case '#tiktok':
             if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
-            if (args.length === 1) return client.reply(from, 'Kirim perintah *#komiku [query]*\nContoh : *#komiku darling in the franxx*', id)
+            if (args.length === 1) return client.reply(from, 'Kirim perintah *#tiktok [query]*\nContoh : *#tiktok https://vt.tiktok.com/yqyjPX/*', id)
             const tkp = await get.get('https://api.vhtear.com/tiktokdl?link=' + body.slice(7) + '&apikey=Tobz2k19').json()
             if (tkp.error) return client.reply(from, tkp.error, id)
             const tpk = `➸ Judul : ${tkp.result.title}\n➸ Deskripsi : ${tkp.result.desk}\n➸ Durasi : ${tkp.result.duration}\n➸ Dibuat : ${tkp.result.dibuat}`
@@ -631,7 +631,7 @@ ${desc}`)
             const dlig = await slicedArgs.join(' ')
             console.log(dlig)
             try {
-            const dlig2 = await axios.get(`https://api.vhtear.com/instadl?link=${dlig}&apikey=Tobz2k19`)
+            const dlig2 = await axios.get('https://api.vhtear.com/instadl?link='+ dlig +'&apikey=Tobz2k19')
             const { desc, urlDownload } = dlig2.data.result
 
             const igdl = `*User Ditemukan!*
@@ -1149,7 +1149,7 @@ ${desc}`)
               var namae = pushname
               var sts = await client.getStatus(author)
               var adm = isGroupAdmins
-              var donate = isAdmins
+              var donate = isAdmin
               const { status } = sts
                if (pic == undefined) {
                var pfp = errorurl 
@@ -1164,7 +1164,7 @@ ${desc}`)
              var namae = quotedMsgObj.sender.name
              var sts = await client.getStatus(qmid)
              var adm = isGroupAdmins
-             var donate = isAdmins
+             var donate = isAdmin
              const { status } = sts
               if (pic == undefined) {
               var pfp = errorurl 
