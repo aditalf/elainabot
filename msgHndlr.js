@@ -11,9 +11,10 @@ const fetch = require('node-fetch')
 const { spawn, exec } = require('child_process')
 const nhentai = require('nhentai-js')
 const { API } = require('nhentai-api')
-const { downloader, liriklagu, quotemaker, randomNimek, fb, sleep, jadwalTv, ss, msgFilter, processTime, custom, uploadImages } = require('./lib/functions')
+const { downloader, liriklagu, quotemaker, randomNimek, fb, isUrl, sleep, jadwalTv, ss, msgFilter, processTime } = require('./lib/functions')
 const { help, snk, info, donate, readme, listChannel } = require('./lib/help')
 const { stdout } = require('process')
+const { uploadImages, custom } = require('./lib/fetcher')
 const quotedd = require('./lib/quote')
 const nsfw_ = JSON.parse(fs.readFileSync('./lib/NSFW.json'))
 const welkom = JSON.parse(fs.readFileSync('./lib/welcome.json'))
@@ -28,8 +29,8 @@ module.exports = msgHandler = async (client, message) => {
         const { type, id, from, t, sender, isGroupMsg, chat, chatId, caption, isMedia, mimetype, quotedMsg, quotedMsgObj, author, mentionedJidList } = message
         let { body } = message
         const { name, formattedTitle } = chat
-        let { pushname, verifiedName } = sender
-        pushname = pushname || verifiedName
+        let { pushname, verifiedName, formattedName } = sender
+        pushname = pushname || verifiedName || formattedName
         const commands = caption || body || ''
         const command = commands.toLowerCase().split(' ')[0] || ''
         const args =  commands.split(' ')
@@ -109,7 +110,6 @@ module.exports = msgHandler = async (client, message) => {
         const isBlocked = blockNumber.includes(sender.id)
         const isNsfw = isGroupMsg ? nsfw_.includes(chat.id) : false
         const uaOverride = 'WhatsApp/2.2029.4 Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36'
-        const isUrl = new RegExp(/https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&/=]*)/gi)
         const url = args.length !== 0 ? args[0] : ''
         const isQuotedImage = quotedMsg && quotedMsg.type === 'image'
         const errorurl = 'https://steamuserimages-a.akamaihd.net/ugc/954087817129084207/5B7E46EE484181A676C02DFCAD48ECB1C74BC423/?imw=512&&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=false'
@@ -327,84 +327,6 @@ ${desc}`)
                 client.sendImage(from, './media/img/after.jpg', 'nulis.jpg', 'Nih mhank', id)
             })
             break
-        case '#twt':
-        case '#twitter':
-            if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
-            if (args.length !== 1) return client.reply(from, 'Maaf, format pesan salah silahkan periksa menu. [Wrong Format]', id)
-            if (!isUrl(url) & !url.includes('twitter.com') || url.includes('t.co')) return client.reply(from, 'Maaf, url yang kamu kirim tidak valid. [Invalid Link]', id)
-            await client.reply(from, `_Scraping Metadata..._ \n\nSupport Bot Kami Agar Tetap Aktif Dengan Cara #donasi`, id)
-            downloader.tweet(url).then(async (data) => {
-                if (data.type === 'video') {
-                    const content = data.variants.filter(x => x.content_type !== 'application/x-mpegURL').sort((a, b) => b.bitrate - a.bitrate)
-                    const result = await urlShortener(content[0].url)
-                    console.log('Shortlink: ' + result)
-                    await client.sendFileFromUrl(from, content[0].url, 'video.mp4', `Link Download: ${result} \n\nProcessed for ${processTime(t, moment())} _Second_`, null, null, true)
-                        .then((serialized) => console.log(`Sukses Mengirim File dengan id: ${serialized} diproses selama ${processTime(t, moment())}`))
-                        .catch((err) => console.error(err))
-                } else if (data.type === 'photo') {
-                    for (let i = 0; i < data.variants.length; i++) {
-                        await client.sendFileFromUrl(from, data.variants[i], data.variants[i].split('/media/')[1], '', null, null, true)
-                            .then((serialized) => console.log(`Sukses Mengirim File dengan id: ${serialized} diproses selama ${processTime(t, moment())}`))
-                            .catch((err) => console.error(err))
-                    }
-                }
-            })
-                .catch(() => client.sendText(from, 'Maaf, link tidak valid atau tidak ada media di link yang kamu kirim. [Invalid Link]'))
-            break
-        case '#tiktok':
-            if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
-            if (args.length !== 1) return client.reply(from, 'Maaf, format pesan salah silahkan periksa menu. [Wrong Format]', id)
-            if (!isUrl(url) && !url.includes('tiktok.com')) return client.reply(from, 'Maaf, link yang kamu kirim tidak valid. [Invalid Link]', id)
-            await client.reply(from, `_Scraping Metadata..._ \n\nUntuk Donasi Ketik *#donasi**`, id)
-            downloader.tiktok(url).then(async (videoMeta) => {
-                const filename = videoMeta.authorMeta.name + '.mp4'
-                const caps = `*Metadata:*\nUsername: ${videoMeta.authorMeta.name} \nMusic: ${videoMeta.musicMeta.musicName} \nView: ${videoMeta.playCount.toLocaleString()} \nLike: ${videoMeta.diggCount.toLocaleString()} \nComment: ${videoMeta.commentCount.toLocaleString()} \nShare: ${videoMeta.shareCount.toLocaleString()} \nCaption: ${videoMeta.text.trim() ? videoMeta.text : '-'}`
-                await client.sendFileFromUrl(from, videoMeta.url, filename, videoMeta.NoWaterMark ? caps : `⚠ Video tanpa watermark tidak tersedia. \n\n${caps}`, '', { headers: { 'User-Agent': 'okhttp/4.5.0', referer: 'https://www.tiktok.com/' } }, true)
-                    .then((serialized) => console.log(`Sukses Mengirim File dengan id: ${serialized} diproses selama ${processTime(t, moment())}`))
-                    .catch((err) => console.error(err))
-            }).catch(() => client.reply(from, 'Gagal mengambil metadata, link yang kamu kirim tidak valid. [Invalid Link]', id))
-            break
-        case '#ytmp3':
-            if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
-            if (args.length === 1) return client.reply(from, 'Kirim perintah *#ytmp3 [linkYt]*, untuk contoh silahkan kirim perintah *#readme*')
-            let isLinks = args[1].match(/(?:https?:\/{2})?(?:w{3}\.)?youtu(?:be)?\.(?:com|be)(?:\/watch\?v=|\/)([^\s&]+)/)
-            if (!isLinks) return client.reply(from, mess.error.Iv, id)
-            try {
-                client.reply(from, mess.wait, id)
-                const resp = await get.get('https://mhankbarbar.herokuapp.com/api/yta?url='+ args[1]).json()
-                if (resp.error) {
-                    client.reply(from, resp.error, id)
-                } else {
-                    const { title, thumb, filesize, result } = await resp
-                    if (Number(filesize.split(' MB')[0]) >= 30.00) return client.reply(from, 'Maaf durasi video sudah melebihi batas maksimal!', id)
-                    client.sendFileFromUrl(from, thumb, 'thumb.jpg', `➸ *Title* : ${title}\n➸ *Filesize* : ${filesize}\n\nSilahkan tunggu sebentar proses pengiriman file membutuhkan waktu beberapa menit.`, id)
-                    await client.sendFileFromUrl(from, result, `${title}.mp3`, '', id).catch(() => client.reply(from, mess.error.Yt3, id))
-                }
-            } catch (err) {
-                client.sendText(ownerNumber, 'Error ytmp3 : '+ err)
-                client.reply(from, mess.error.Yt3, id)
-            }
-            break
-        case '#ytmp4':
-            if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
-            if (args.length === 1) return client.reply(from, 'Kirim perintah *#ytmp4 [linkYt]*, untuk contoh silahkan kirim perintah *#readme*')
-            let isLin = args[1].match(/(?:https?:\/{2})?(?:w{3}\.)?youtu(?:be)?\.(?:com|be)(?:\/watch\?v=|\/)([^\s&]+)/)
-            if (!isLin) return client.reply(from, mess.error.Iv, id)
-            try {
-                client.reply(from, mess.wait, id)
-                const ytv = await get.get('https://mhankbarbar.herokuapp.com/api/ytv?url='+ args[1]).json()
-                if (ytv.error) {
-                    client.reply(from, ytv.error, id)
-                } else {
-                    if (Number(ytv.filesize.split(' MB')[0]) > 40.00) return client.reply(from, 'Maaf durasi video sudah melebihi batas maksimal!', id)
-                    client.sendFileFromUrl(from, ytv.thumb, 'thumb.jpg', `➸ *Title* : ${ytv.title}\n➸ *Filesize* : ${ytv.filesize}\n\nSilahkan tunggu sebentar proses pengiriman file membutuhkan waktu beberapa menit.`, id)
-                    await client.sendFileFromUrl(from, ytv.result, `${ytv.title}.mp4`, '', id).catch(() => client.reply(from, mess.error.Yt4, id))
-                }
-            } catch (er) {
-                client.sendText(ownerNumber, 'Error ytmp4 : '+ er)
-                client.reply(from, mess.error.Yt4, id)
-            }
-            break
         case '#koin':
             if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
             const side = Math.floor(Math.random() * 2) + 1
@@ -482,23 +404,6 @@ ${desc}`)
         case '#creator':
             client.reply(from, 'My Owner : Tobz\nWhatsapp : wa.me/6281311850715\nMy Owner : Stevan\nWhatsapp : wa.me/6282199110609', id)
             break
-        case '#ig':
-            if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
-            if (args.length === 1) return client.reply(from, 'Kirim perintah *#ig [linkIg]* untuk contoh silahkan kirim perintah *#readme*')
-            if (!args[1].match(isUrl) && !args[1].includes('instagram.com')) return client.reply(from, mess.error.Ig, id)
-            try {
-                client.reply(from, mess.wait, id)
-                const resp = await get.get('https://api.vhtear.com/instadl?link='+ args[1] + '&apikey=').json()
-                if (resp.result.urlDownload.includes('.mp4')) {
-                    var ext = '.mp4'
-                } else {
-                    var ext = '.jpg'
-                }
-                await client.sendFileFromUrl(from, resp.result.urlDownload, `igeh${ext}`, '',  id)
-            } catch {
-                client.reply(from, mess.error.Ig, id)
-                }
-            break
         case '#nsfw':
             if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
             if (!isGroupAdmins) return client.reply(from, 'Perintah ini hanya bisa di gunakan oleh Admin group!', id)
@@ -531,24 +436,10 @@ ${desc}`)
                 client.reply(from, 'Pilih enable atau disable udin!', id)
             }
             break
-        case '#donasimenu':
-            if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
-            if (!isAdmin) return client.reply(from, 'Perintah ini hanya bisa di gunakan oleh Admin!', id)
-            client.reply(from, '1. #banned [tag]\n2. #unbanned [@tag]', id)
-            break
         case '#nsfwmenu':
             if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
             if (!isNsfw) return
             client.reply(from, '1. #randomHentai\n2. #randomNsfwNeko\n3. #nhentai [kode]', id)
-            break
-        case '#igstalk':
-            if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
-            if (args.length === 1)  return client.reply(from, 'Kirim perintah *#igStalk @username*\nContoh *#igStalk @duar_amjay*', id)
-            const stalk = await get.get('https://mhankbarbar.herokuapp.com/api/stalk?username='+ args[1]).json()
-            if (stalk.error) return client.reply(from, stalk.error, id)
-            const { Biodata, Jumlah_Followers, Jumlah_Following, Jumlah_Post, Name, Username, Profile_pic } = stalk
-            const caps = `➸ *Nama* : ${Name}\n➸ *Username* : ${Username}\n➸ *Jumlah Followers* : ${Jumlah_Followers}\n➸ *Jumlah Following* : ${Jumlah_Following}\n➸ *Jumlah Postingan* : ${Jumlah_Post}\n➸ *Biodata* : ${Biodata}`
-            await client.sendFileFromUrl(from, Profile_pic, 'Profile.jpg', caps, id)
             break
         case '#infogempa':
             if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
@@ -619,6 +510,8 @@ ${desc}`)
              await client.sendFileFromUrl(from, errorurl2, 'error.png', '💔️ Maaf, Anime tidak ditemukan')
            }
           break
+        
+        // MEDIA //
         case '#covid':
             arg = body.trim().split(' ')
             console.log(...arg[1])
@@ -631,41 +524,153 @@ ${desc}`)
                 await client.sendText(from, '🌎️ Covid Info - ' + country + ' 🌍️\n\n✨️ Total Cases: ' + `${cases}` + '\n📆️ Today\'s Cases: ' + `${todayCases}` + '\n☣️ Total Deaths: ' + `${deaths}` + '\n☢️ Today\'s Deaths: ' + `${todayDeaths}` + '\n⛩️ Active Cases: ' + `${active}` + '.')
             break
         case '#spamcall':
+            arg = body.trim().split(' ')
+            console.log(...arg[1])
+            var slicedArgs = Array.prototype.slice.call(arg, 1);
+            console.log(slicedArgs)
+            const spam = await slicedArgs.join(' ')
+            console.log(spam)
+            const call2 = await axios.get('https://mhankbarbar.herokuapp.com/api/spamcall?no=' + spam)
+            const { logs } = call2.data
+                await client.sendText(from, `Logs : ${logs}` + '.')
+            break
+        case '#ytmp3':
             if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
-            if (!isOwner, !isAdmin) return client.reply(from, 'Perintah ini hanya untuk Owner & Admin bot', id)
-            if (args.length === 1) return client.reply(from, 'Kirim perintah *#spamcall [query]*\nContoh : *#spamcall 81327482731 (tidak usah memakai angka 0 didepan)*', id)
-            const call = await get.get('https://mhankbarbar.herokuapp.com/api/spamcall?no=' + body.slice(7)).json()
-            if (call.error) return client.reply(from, animep.error, id)
-            const res_call = `Logs : ${call.logs}`
-            client.sendFileFromUrl(from, res_call, id)
+            if (args.length === 1) return client.reply(from, 'Kirim perintah *#ytmp3 [linkYt]*, untuk contoh silahkan kirim perintah *#readme*')
+            let isLinks = args[1].match(/(?:https?:\/{2})?(?:w{3}\.)?youtu(?:be)?\.(?:com|be)(?:\/watch\?v=|\/)([^\s&]+)/)
+            if (!isLinks) return client.reply(from, mess.error.Iv, id)
+            try {
+                client.reply(from, mess.wait, id)
+                const resp = await get.get('https://mhankbarbar.herokuapp.com/api/yta?url='+ args[1]).json()
+                if (resp.error) {
+                    client.reply(from, resp.error, id)
+                } else {
+                    const { title, thumb, filesize, result } = await resp
+                    if (Number(filesize.split(' MB')[0]) >= 30.00) return client.reply(from, 'Maaf durasi video sudah melebihi batas maksimal!', id)
+                    client.sendFileFromUrl(from, thumb, 'thumb.jpg', `➸ *Title* : ${title}\n➸ *Filesize* : ${filesize}\n\nSilahkan tunggu sebentar proses pengiriman file membutuhkan waktu beberapa menit.`, id)
+                    await client.sendFileFromUrl(from, result, `${title}.mp3`, '', id).catch(() => client.reply(from, mess.error.Yt3, id))
+                }
+            } catch (err) {
+                client.sendText(ownerNumber, 'Error ytmp3 : '+ err)
+                client.reply(from, mess.error.Yt3, id)
+            }
+            break
+        case '#ytmp4':
+            if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
+            if (args.length === 1) return client.reply(from, 'Kirim perintah *#ytmp4 [linkYt]*, untuk contoh silahkan kirim perintah *#readme*')
+            let isLin = args[1].match(/(?:https?:\/{2})?(?:w{3}\.)?youtu(?:be)?\.(?:com|be)(?:\/watch\?v=|\/)([^\s&]+)/)
+            if (!isLin) return client.reply(from, mess.error.Iv, id)
+            try {
+                client.reply(from, mess.wait, id)
+                const ytv = await get.get('https://mhankbarbar.herokuapp.com/api/ytv?url='+ args[1]).json()
+                if (ytv.error) {
+                    client.reply(from, ytv.error, id)
+                } else {
+                    if (Number(ytv.filesize.split(' MB')[0]) > 40.00) return client.reply(from, 'Maaf durasi video sudah melebihi batas maksimal!', id)
+                    client.sendFileFromUrl(from, ytv.thumb, 'thumb.jpg', `➸ *Title* : ${ytv.title}\n➸ *Filesize* : ${ytv.filesize}\n\nSilahkan tunggu sebentar proses pengiriman file membutuhkan waktu beberapa menit.`, id)
+                    await client.sendFileFromUrl(from, ytv.result, `${ytv.title}.mp4`, '', id).catch(() => client.reply(from, mess.error.Yt4, id))
+                }
+            } catch (er) {
+                client.sendText(ownerNumber, 'Error ytmp4 : '+ er)
+                client.reply(from, mess.error.Yt4, id)
+            }
+            break
+        case '#tiktok':
+            if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
+            if (args.length === 1) return client.reply(from, 'Kirim perintah *#komiku [query]*\nContoh : *#komiku darling in the franxx*', id)
+            const tkp = await get.get('https://api.vhtear.com/tiktokdl?link=' + body.slice(7) + '&apikey=Tobz2k19').json()
+            if (tkp.error) return client.reply(from, tkp.error, id)
+            const tpk = `➸ Judul : ${tkp.result.title}\n➸ Deskripsi : ${tkp.result.desk}\n➸ Durasi : ${tkp.result.duration}\n➸ Dibuat : ${tkp.result.dibuat}`
+            client.sendFileFromUrl(from, tkp.result.video, `${tkp.result.title}.mp4`, tpk, id)
+            break
+        case '#igstalk':
+            if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
+            if (args.length === 1)  return client.reply(from, 'Kirim perintah *#igStalk @username*\nContoh *#igStalk @duar_amjay*', id)
+            const stalk = await get.get('https://mhankbarbar.herokuapp.com/api/stalk?username='+ args[1]).json()
+            if (stalk.error) return client.reply(from, stalk.error, id)
+            const { Biodata, Jumlah_Followers, Jumlah_Following, Jumlah_Post, Name, Username, Profile_pic } = stalk
+            const caps = `➸ *Nama* : ${Name}\n➸ *Username* : ${Username}\n➸ *Jumlah Followers* : ${Jumlah_Followers}\n➸ *Jumlah Following* : ${Jumlah_Following}\n➸ *Jumlah Postingan* : ${Jumlah_Post}\n➸ *Biodata* : ${Biodata}`
+            await client.sendFileFromUrl(from, Profile_pic, 'Profile.jpg', caps, id)
             break
         case '#tiktokstalk':
             if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
-            const tkeyword = message.body.replace('#tiktokstalk', '')
+            arg = body.trim().split(' ')
+            console.log(...arg[1])
+            var slicedArgs = Array.prototype.slice.call(arg, 1);
+            console.log(slicedArgs)
+            const tstalk = await slicedArgs.join(' ')
+            console.log(tstalk)
             try {
-            const data = await axios(
-           `https://api.vhtear.com/tiktokprofile?query=${tkeyword}&apikey=Tobz2k19`
-            )
-            const parsed = await data.json()
-            if (!parsed) {
-              await client.sendFileFromUrl(from, errorurl2, 'error.png', '💔️ Maaf, User tidak ditemukan', id)
-              return null
-              }
-            const { username, title, bio, follow, follower, like_count, video_post, description, picture, url_account } = parsed.results[0]
+            const tstalk2 = await axios.get('https://api.vhtear.com/tiktokprofile?query=' + tstalk + '&apikey=Tobz2k19')
+            const { username, bio, follow, follower, title, like_count, video_post, description, picture, url_account } = tstalk2.data.result
             const tiktod = `*User Ditemukan!*
 ➸ *Username:* ${username}
 ➸ *Judul:* ${title}
 ➸ *Bio:* ${bio}
 ➸ *Mengikuti:* ${follow}
 ➸ *Pengikut:* ${follower}
-➸ *Jumlah Like*: ${line_count}
+➸ *Jumlah Like*: ${like_count}
 ➸ *Jumlah Postingan:* ${username}
-➸ *Deskripsi:* ${deskripsi}`
+➸ *Deskripsi:* ${description}
+➸ *Link:* ${url_account}`
 
             const pictk = await bent("buffer")(picture)
             const base64 = `data:image/jpg;base64,${pictk.toString("base64")}`
             client.sendImage(from, base64, title, tiktod)
-           } catch (err) {
+            } catch (err) {
+             console.error(err.message)
+             await client.sendFileFromUrl(from, errorurl2, 'error.png', '💔️ Maaf, User tidak ditemukan')
+           }
+          break
+        case '#ig':
+            if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
+            arg = body.trim().split(' ')
+            console.log(...arg[1])
+            var slicedArgs = Array.prototype.slice.call(arg, 1);
+            console.log(slicedArgs)
+            const dlig = await slicedArgs.join(' ')
+            console.log(dlig)
+            try {
+            const dlig2 = await axios.get(`https://api.vhtear.com/instadl?link=${dlig}&apikey=Tobz2k19`)
+            const { desc, urlDownload } = dlig2.data.result
+
+            const igdl = `*User Ditemukan!*
+
+➸ *Deskripsi:* ${desc}`
+
+            const pictk = await bent("buffer")(urlDownload)
+            const base64 = `data:image/jpg;base64,${pictk.toString("base64")}`
+            client.sendFileFromUrl(from, base64, desc, igdl)
+            } catch (err) {
+             console.error(err.message)
+             await client.sendFileFromUrl(from, errorurl2, 'error.png', '💔️ Maaf, User tidak ditemukan')
+           }
+          break
+        case '#joox':
+            if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
+            if (!isOwner, !isAdmin) return client.reply(from, 'Perintah ini hanya untuk Owner & Admin bot', id)
+            arg = body.trim().split(' ')
+            console.log(...arg[1])
+            var slicedArgs = Array.prototype.slice.call(arg, 1);
+            console.log(slicedArgs)
+            const music = await slicedArgs.join(' ')
+            console.log(music)
+            try {
+            const music2 = await axios.get('hhttps://api.vhtear.com/music?query=' + music + '&apikey=Tobz2k19')
+            const { penyanyi, judul, album, linkImg, linkMp3, filesize, duration } = music2.data.result[0]
+            const musik = `*User Ditemukan!*
+
+➸ *Penyanyi:* ${penyanyi}
+➸ *Judul:* ${judul}
+➸ *Album:* ${album}
+➸ *Size:* ${filesize}
+➸ *Durasi:* ${duration}`
+
+            const pictk = await bent("buffer")(linkImg)
+            const base64 = `data:image/jpg;base64,${pictk.toString("base64")}`
+            client.sendImage(from, base64, judul, musik)
+            client.sendFileFromUrl(from, linkMp3, `${judul}.mp3`, '', id)
+            } catch (err) {
              console.error(err.message)
              await client.sendFileFromUrl(from, errorurl2, 'error.png', '💔️ Maaf, User tidak ditemukan')
            }
@@ -1046,7 +1051,14 @@ ${desc}`)
             const listDaerah = await get('https://mhankbarbar.herokuapp.com/daerah').json()
             client.reply(from, listDaerah, id)
             break
-         case '#listblock':
+        case '#megumiadmin':
+            let admn = `This is list of Megumi Admin\nTotal : ${adminNumber.length}\n`
+            for (let i of adminNumber) {
+                admn += `➸ ${i.replace(/@c.us/g,'')}\n`
+            }
+            await client.reply(from, admn, id)
+            break
+        case '#listblock':
             if(!isOwner) return client.reply(from, 'Perintah ini hanya untuk owner bot!', id)
             let hih = `This is list of blocked number\nTotal : ${blockNumber.length}\n`
             for (let i of blockNumber) {
