@@ -123,24 +123,6 @@ module.exports = msgHandler = async (client, message) => {
         if (isBlocked) return
         switch(command) {
 
-            case '#ban':
-            if (!isGroupMsg) return client.reply(from, 'Fitur ini hanya bisa di gunakan dalam group', id)
-            if (!isGroupAdmins) return client.reply(from, 'Fitur ini hanya bisa di gunakan oleh admin group', id)
-            if (!isBotGroupAdmins) return client.reply(from, 'Fitur ini hanya bisa di gunakan ketika bot menjadi admin', id)
-            if (mentionedJidList.length === 0) return client.reply(from, 'Untuk menggunakan fitur ini, kirim perintah *#promote* @tagmember', id)
-            if (mentionedJidList.length >= 2) return client.reply(from, 'Maaf, perintah ini hanya dapat digunakan kepada 1 user.', id)
-            if (groupAdmins.includes(mentionedJidList[0])) return client.reply(from, 'Maaf, user tersebut sudah menjadi admin.', id)
-            await client.contactBlock(groupId, mentionedJidList[0])
-            await client.sendTextWithMentions(from, `Perintah diterima, menambahkan @${mentionedJidList[0]} sebagai admin.`)
-            break
-        case '#unblock':
-            if(!isOwner) return client.reply(from, 'Hanya member donasi yang diberikan command special ini', id)
-            await client.sendText(from, `Perintah Owner diterima, membuka blockir:\n${mentionedJidList.join('\n')}`)
-            for (let i = 0; i < mentionedJidList.length; i++) {
-                if (groupAdmins.includes(mentionedJidList[i])) return client.reply(from, mess.error.Bk, id)
-                await client.contactUnblock(from, mentionedJidList[i])
-            }
-            break
         case '#groupinfo' :
             if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', message.id)
             var totalMem = chat.groupMetadata.participants.length
@@ -513,6 +495,7 @@ ${desc}`)
         
         // MEDIA //
         case '#covid':
+            if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group', id)
             arg = body.trim().split(' ')
             console.log(...arg[1])
             var slicedArgs = Array.prototype.slice.call(arg, 1);
@@ -524,6 +507,8 @@ ${desc}`)
                 await client.sendText(from, '🌎️ Covid Info - ' + country + ' 🌍️\n\n✨️ Total Cases: ' + `${cases}` + '\n📆️ Today\'s Cases: ' + `${todayCases}` + '\n☣️ Total Deaths: ' + `${deaths}` + '\n☢️ Today\'s Deaths: ' + `${todayDeaths}` + '\n⛩️ Active Cases: ' + `${active}` + '.')
             break
         case '#spamcall':
+            if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group', id)
+            if (!isOwner, !isAdmin) return client.reply(from, 'Perintah ini hanya untuk Owner & Admin bot', id)
             arg = body.trim().split(' ')
             console.log(...arg[1])
             var slicedArgs = Array.prototype.slice.call(arg, 1);
@@ -631,7 +616,7 @@ ${desc}`)
             const dlig = await slicedArgs.join(' ')
             console.log(dlig)
             try {
-            const dlig2 = await axios.get('https://api.vhtear.com/instadl?link='+ dlig +'&apikey=Tobz2k19')
+            const dlig2 = await axios.get('https://api.vhtear.com/instadl?link=' + dlig + '&apikey=Tobz2k19')
             const { desc, urlDownload } = dlig2.data.result
 
             const igdl = `*User Ditemukan!*
@@ -640,7 +625,26 @@ ${desc}`)
 
             const pictk = await bent("buffer")(urlDownload)
             const base64 = `data:image/jpg;base64,${pictk.toString("base64")}`
-            client.sendFileFromUrl(from, base64, desc, igdl)
+            client.sendImage(from, base64, desc, igdl)
+            } catch (err) {
+             console.error(err.message)
+             await client.sendFileFromUrl(from, errorurl2, 'error.png', '💔️ Maaf, User tidak ditemukan')
+           }
+          break
+        case '#gimage':
+            if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
+            arg = body.trim().split(' ')
+            console.log(...arg[1])
+            var slicedArgs = Array.prototype.slice.call(arg, 1);
+            console.log(slicedArgs)
+            const gimage = await slicedArgs.join(' ')
+            console.log(gimage)
+            try {
+            const gimage2 = await axios.get('https://api.vhtear.com/googlesearch?query=' + gimage + '&apikey=Tobz2k19')
+            const { result } = gimage2.data
+            const pictk = await bent("buffer")(result)
+            const base64 = `data:image/jpg;base64,${pictk.toString("base64")}`
+            client.sendImage(from, base64, 'image.png', 'nihh mhank')
             } catch (err) {
              console.error(err.message)
              await client.sendFileFromUrl(from, errorurl2, 'error.png', '💔️ Maaf, User tidak ditemukan')
