@@ -124,7 +124,6 @@ module.exports = msgHandler = async (client, message) => {
         if (isBlocked) return
         switch(command) {
 
-        break
        case '#sticker':
         case '#stiker':
             if (isMedia && type === 'image') {
@@ -164,6 +163,7 @@ module.exports = msgHandler = async (client, message) => {
                     client.reply(from, '[❗] Kirim video dengan caption *#stickerGif* max 10 sec!', id)
                 )
             }
+            break
         case '#groupinfo' :
             if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', message.id)
             var totalMem = chat.groupMetadata.participants.length
