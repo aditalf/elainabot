@@ -1056,7 +1056,7 @@ ${desc}`)
             const ngetik = body.slice(7)
             const nullis = await nulis(ngetik)
             client.reply(from, mess.wait, id)
-            client.sendFile(from, nullis, 'ngetik.png','neh...')
+            client.sendImage(from, nullis, 'ngetik.png','neh...')
             break
         case '#lirik':
             if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
