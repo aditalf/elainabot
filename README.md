@@ -1,5 +1,17 @@
 <p align="center">
-<a href="https://github.com/ItzTobz/megumikato2"><img title="MEGUMIKATO" src="https://avatars1.githubusercontent.com/u/29368318?s=400&u=e804e2dfc71c6a6a033df259b652275fdcb6faf7&v=4"></a>
+<img src="https://avatars1.githubusercontent.com/u/29368318?s=400&u=e804e2dfc71c6a6a033df259b652275fdcb6faf7&v=4" width="128" height="128"/>
+</p>
+<p align="center">
+<a href="#"><img title="Megumi Kato" src="https://img.shields.io/badge/Whatsapp Bot-green?colorA=%23ff0000&colorB=%23017e40&style=for-the-badge"></a>
+</p>
+<p align="center">
+<a href="https://github.com/ItzTobz"><img title="Author" src="https://img.shields.io/badge/Author-mhankbarbar-red.svg?style=for-the-badge&logo=github"></a>
+</p>
+<p align="center">
+<a href="https://github.com/ItzTobz/followers"><img title="Followers" src="https://img.shields.io/github/followers/mhankbarbar?color=blue&style=flat-square"></a>
+<a href="https://github.com/ItzTobz/whatsapp-bot/stargazers/"><img title="Stars" src="https://img.shields.io/github/stars/mhankbarbar/whatsapp-bot?color=red&style=flat-square"></a>
+<a href="https://github.com/ItzTobz/whatsapp-bot/network/members"><img title="Forks" src="https://img.shields.io/github/forks/mhankbarbar/whatsapp-bot?color=red&style=flat-square"></a>
+<a href="https://github.com/ItzTobz/whatsapp-bot/watchers"><img title="Watching" src="https://img.shields.io/github/watchers/mhankbarbar/whatsapp-bot?label=Watchers&color=blue&style=flat-square"></a>
 </p>
 
 ## Contact
