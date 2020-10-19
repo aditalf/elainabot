@@ -11,7 +11,7 @@ const fetch = require('node-fetch')
 const { spawn, exec } = require('child_process')
 const nhentai = require('nhentai-js')
 const { API } = require('nhentai-api')
-const { downloader, liriklagu, quotemaker, randomNimek, fb, isUrl, sleep, jadwalTv, ss, msgFilter, processTime, nulis } = require('./lib/functions')
+const { downloader, liriklagu, quotemaker, randomNimek, fb, sleep, jadwalTv, ss, msgFilter, processTime, nulis } = require('./lib/functions')
 const { help, snk, info, donate, readme, listChannel } = require('./lib/help')
 const { stdout } = require('process')
 const { uploadImages, custom } = require('./lib/fetcher')
@@ -29,8 +29,8 @@ module.exports = msgHandler = async (client, message) => {
         const { type, id, from, t, sender, isGroupMsg, chat, chatId, caption, isMedia, mimetype, quotedMsg, quotedMsgObj, author, mentionedJidList } = message
         let { body } = message
         const { name, formattedTitle } = chat
-        let { pushname, verifiedName, formattedName } = sender
-        pushname = pushname || verifiedName || formattedName
+        let { pushname, verifiedName } = sender
+        pushname = pushname || verifiedName
         const commands = caption || body || ''
         const command = commands.toLowerCase().split(' ')[0] || ''
         const args =  commands.split(' ')
@@ -101,7 +101,7 @@ module.exports = msgHandler = async (client, message) => {
         const isGroupAdmins = isGroupMsg ? groupAdmins.includes(sender.id) : false
         const isBotGroupAdmins = isGroupMsg ? groupAdmins.includes(botNumber + '@c.us') : false
 
-        const adminNumber = ['6281311850715@c.us','6281225579096@c.us','6283803749450@c.us','6282112426773@c.us','6282128570120@c.us','6282199110609@c.us'] 
+        const adminNumber = ['6281311850715@c.us','6281225579096@c.us','6283803749450@c.us','6282112426773@c.us','6282128570120@c.us','6282199110609@c.us','6282311616846c.us'] 
         const isAdmin = adminNumber.includes(sender.id)
         const ownerNumber = ['6281311850715@c.us']
         const isOwner = ownerNumber.includes(sender.id)
@@ -110,6 +110,7 @@ module.exports = msgHandler = async (client, message) => {
         const isBlocked = blockNumber.includes(sender.id)
         const isNsfw = isGroupMsg ? nsfw_.includes(chat.id) : false
         const uaOverride = 'WhatsApp/2.2029.4 Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36'
+        const isUrl = new RegExp(/https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&/=]*)/gi)
         const url = args.length !== 0 ? args[0] : ''
         const isQuotedImage = quotedMsg && quotedMsg.type === 'image'
         const errorurl = 'https://steamuserimages-a.akamaihd.net/ugc/954087817129084207/5B7E46EE484181A676C02DFCAD48ECB1C74BC423/?imw=512&&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=false'
@@ -123,25 +124,6 @@ module.exports = msgHandler = async (client, message) => {
         if (isBlocked) return
         switch(command) {
 
-        case '#groupinfo' :
-            if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', message.id)
-            var totalMem = chat.groupMetadata.participants.length
-            var desc = chat.groupMetadata.desc
-            var groupname = name
-            var welgrp = welkom.includes(chat.id)
-            var ngrp = nsfw_.includes(chat.id)
-            var grouppic = await client.getProfilePicFromServer(chat.id)
-            if (grouppic == undefined) {
-                 var pfp = errorurl
-            } else {
-                 var pfp = grouppic 
-            }
-            await client.sendFileFromUrl(from, pfp, 'group.png', `➸ *Name : ${groupname}* 
-*➸ Members : ${totalMem}*
-*➸ Welcome : ${welgrp}*
-*➸ NSFW : ${ngrp}*
-*➸ Group Description* 
-${desc}`)
         break
        case '#sticker':
         case '#stiker':
@@ -182,6 +164,25 @@ ${desc}`)
                     client.reply(from, '[❗] Kirim video dengan caption *#stickerGif* max 10 sec!', id)
                 )
             }
+        case '#groupinfo' :
+            if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', message.id)
+            var totalMem = chat.groupMetadata.participants.length
+            var desc = chat.groupMetadata.desc
+            var groupname = name
+            var welgrp = welkom.includes(chat.id)
+            var ngrp = nsfw_.includes(chat.id)
+            var grouppic = await client.getProfilePicFromServer(chat.id)
+            if (grouppic == undefined) {
+                 var pfp = errorurl
+            } else {
+                 var pfp = grouppic 
+            }
+            await client.sendFileFromUrl(from, pfp, 'group.png', `➸ *Name : ${groupname}* 
+*➸ Members : ${totalMem}*
+*➸ Welcome : ${welgrp}*
+*➸ NSFW : ${ngrp}*
+*➸ Group Description* 
+${desc}`)
             break
         case '#quoterandom' :
         case '#quote' :
@@ -343,7 +344,8 @@ ${desc}`)
             break
         case '#owner':
         case '#creator':
-            client.reply(from, 'My Owner : Tobz\nWhatsapp : wa.me/6281311850715', id)
+            client.sendContact(chatId, `6281311850715@c.us`)
+            client.reply(from, 'Itu nomor Pacar ku, eh maksudnya Owner ku', id)
             break
         case '#nsfw':
             if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
@@ -596,28 +598,21 @@ ${desc}`)
           break
         case '#ig':
             if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
-            arg = body.trim().split(' ')
-            console.log(...arg[1])
-            var slicedArgs = Array.prototype.slice.call(arg, 1);
-            console.log(slicedArgs)
-            const dlig = await slicedArgs.join(' ')
-            console.log(dlig)
+            if (args.length === 1) return client.reply(from, 'Kirim perintah *!ig [linkIg]* untuk contoh silahkan kirim perintah *!readme*')
+            if (!args[1].match(isUrl) && !args[1].includes('instagram.com')) return client.reply(from, mess.error.Iv, id)
             try {
-            const dlig2 = await axios.get('https://api.vhtear.com/instadl?link=' + dlig + '&apikey=Tobz2k19')
-            const { desc, urlDownload } = dlig2.data.result
-
-            const igdl = `*User Ditemukan!*
-
-➸ *Deskripsi:* ${desc}`
-
-            const pictk = await bent("buffer")(urlDownload)
-            const base64 = `data:image/jpg;base64,${pictk.toString("base64")}`
-            client.sendImage(from, base64, desc, igdl)
-            } catch (err) {
-             console.error(err.message)
-             await client.sendFileFromUrl(from, errorurl2, 'error.png', '💔️ Maaf, User tidak ditemukan')
-           }
-          break
+                client.reply(from, mess.wait, id)
+                const dlig = await axios.get('https://api.vhtear.com/instadl?link=' + dlig + '&apikey=Tobz2k19')
+                if (dlig.data.result.urlDownload.includes('.mp4')) {
+                    var ext = '.mp4'
+                } else {
+                    var ext = '.jpg'
+                }
+                await client.sendFileFromUrl(from, dlig.data.result.urlDownload, `igeh${ext}`, '', id)
+            } catch {
+                client.reply(from, mess.error.Ig, id)
+                }
+            break
         case '#gimage':
             if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
             arg = body.trim().split(' ')
@@ -796,8 +791,8 @@ ${desc}`)
                 client.reply(from, mess.wait, id)
                 const quotes = arg[1]
                 const author = arg[2]
-                const theme = arg[3]
-                await quotemaker(quotes, author, theme).then(amsu => {
+                const type = arg[3]
+                await quotemaker(quotes, author, type).then(amsu => {
                     client.sendFile(from, amsu, 'quotesmaker.jpg','neh...').catch(() => {
                        client.reply(from, mess.error.Qm, id)
                     })
@@ -1032,6 +1027,24 @@ ${desc}`)
             if (!quotedMsgObj.fromMe) return client.reply(from, 'Salah!!, Bot tidak bisa mengahpus chat user lain!', id)
             client.deleteMessage(quotedMsgObj.chatId, quotedMsgObj.id, false)
             break
+        case '#block':
+            if (!isOwner) return client.reply(from, 'Perintah ini hanya untuk Owner bot', id)     
+            if(args.length >= 3){
+                let block = `${args[2]}@c.us`
+                await client.contactBlock(block).then(()=>{
+                    client.reply(`Success Block ${args[2]}!`)
+                })
+            }
+            break
+        case '#unblock':
+            if (!isOwner) return client.reply(from, 'Perintah ini hanya untuk Owner bot', id)     
+            if(args.length >= 3){
+                let unblock = `${args[2]}@c.us`
+                await client.contactUnblock(unblock).then(()=>{
+                    client.reply(`Success Unblok ${args[2]}!`)
+                })
+            }
+            break
         case '#getses':
             if (!isOwner) return client.reply(from, 'Perintah ini hanya untuk Owner bot', id)            
             const sesPic = await client.getSnapshot()
@@ -1043,7 +1056,7 @@ ${desc}`)
             const ngetik = body.slice(7)
             const nullis = await nulis(ngetik)
             client.reply(from, mess.wait, id)
-            client.sendFile(from, nullis, 'ngetik.jpg','neh...')
+            client.sendFile(from, nullis, 'ngetik.png','neh...')
             break
         case '#lirik':
             if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
