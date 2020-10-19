@@ -1,10 +1,7 @@
 <p align="center">
-  <a href="https://github.com/ItzTobz/megumikato2"><img src="https://avatars1.githubusercontent.com/u/29368318?s=400&u=e804e2dfc71c6a6a033df259b652275fdcb6faf7&v=4"></a>
-  <br>
-  MEGUMI KATO
- <br>
- </p>
-  
+<a href="https://github.com/ItzTobz/megumikato2"><img title="MEGUMIKATO" src="https://avatars1.githubusercontent.com/u/29368318?s=400&u=e804e2dfc71c6a6a033df259b652275fdcb6faf7&v=4></a>
+</p>
+
 ## Contact
 
 Telegram : t.me/tobz2k19
