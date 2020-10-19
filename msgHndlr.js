@@ -11,7 +11,7 @@ const fetch = require('node-fetch')
 const { spawn, exec } = require('child_process')
 const nhentai = require('nhentai-js')
 const { API } = require('nhentai-api')
-const { downloader, liriklagu, quotemaker, randomNimek, fb, isUrl, sleep, jadwalTv, ss, msgFilter, processTime } = require('./lib/functions')
+const { downloader, liriklagu, quotemaker, randomNimek, fb, isUrl, sleep, jadwalTv, ss, msgFilter, processTime, nulis } = require('./lib/functions')
 const { help, snk, info, donate, readme, listChannel } = require('./lib/help')
 const { stdout } = require('process')
 const { uploadImages, custom } = require('./lib/fetcher')
@@ -183,21 +183,6 @@ ${desc}`)
                 )
             }
             break
-         case '#textmaker':
-                if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
-                arg = body.trim().split('|')
-                if ((isMedia || isQuotedImage) && arg.length >= 2) {
-                const top = arg[1]
-                const bottom = arg[2]
-                const encryptMedia = isQuotedImage ? quotedMsg : message
-                const mediaData = await decryptMedia(encryptMedia, uaOverride)
-                const getUrl = await uploadImages(mediaData, false)
-                const ImageBase64 = await custom(getUrl, top, bottom)
-                await client.sendFile(from, ImageBase64, 'image.png', '', '...', true)
-                } else {
-                await client.reply(from, 'Wrong Format!', id)
-                }
-                break
         case '#quoterandom' :
         case '#quote' :
             if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
@@ -642,11 +627,11 @@ ${desc}`)
             const gimage = await slicedArgs.join(' ')
             console.log(gimage)
             try {
-            const gimage2 = await axios.get('https://api.vhtear.com/googlesearch?query=' + gimage + '&apikey=Tobz2k19')
+            const gimage2 = await get.get('https://api.vhtear.com/googleimg?query=' + gimage + '&apikey=Tobz2k19').json()
             const { result_search } = gimage2.data.result
             const pictk = await bent("buffer")(result_search)
             const base64 = `data:image/jpg;base64,${pictk.toString("base64")}`
-            client.sendImage(from, base64, 'image.png', 'nihh mhank')
+            client.sendImage(from, base64, 'image.jpg', 'nihh mhank')
             } catch (err) {
              console.error(err.message)
              await client.sendFileFromUrl(from, errorurl2, 'error.png', '💔️ Maaf, User tidak ditemukan')
@@ -789,6 +774,21 @@ ${desc}`)
                 client.sendFile(from, './media/img/tutod.jpg', 'Tutor.jpg', 'Neh contoh mhank!', id)
             }
             break
+         case '#textmaker':
+                if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
+                arg = body.trim().split('|')
+                if ((isMedia || isQuotedImage) && arg.length >= 2) {
+                const top = arg[1]
+                const bott = arg[2]
+                const encryptMedia = isQuotedImage ? quotedMsg : message
+                const mediaData = await decryptMedia(encryptMedia, uaOverride)
+                const getUrl = await uploadImages(mediaData, false)
+                const ImageBase64 = await custom(getUrl, top, bott)
+                await client.sendFile(from, ImageBase64, 'image.png','neh...')
+                } else {
+                await client.reply(from, 'Wrong Format!', id)
+                }
+                break
         case '#quotemaker':
             if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
             arg = body.trim().split('|')
@@ -804,21 +804,6 @@ ${desc}`)
                 })
             } else {
                 client.reply(from, 'Usage: \n#quotemaker |teks|watermark|theme\n\nEx :\n#quotemaker |ini contoh|bicit|random', id)
-            }
-            break
-        case '#nulis':
-            if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
-            arg = body.trim().split('|')
-            if (arg.length >= 2) {
-                client.reply(from, mess.wait, id)
-                const ngetik = arg[1]
-                await nulis(ngetik).then(amsu => {
-                    client.sendFile(from, amsu, 'ngetik.jpg','neh...').catch(() => {
-                       client.reply(from, mess.error.Qm, id)
-                    })
-                })
-            } else {
-                client.reply(from, 'Usage: \n#nulis [Text] \n\nEx :\n#nulis Nama saya Alay', id)
             }
             break
         case '#bc':
@@ -1051,6 +1036,14 @@ ${desc}`)
             if (!isOwner) return client.reply(from, 'Perintah ini hanya untuk Owner bot', id)            
             const sesPic = await client.getSnapshot()
             client.sendFile(from, sesPic, 'session.png', 'Nih boss', id)
+            break
+        case '#nulis':
+            if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
+            if (args.length == 1) return client.reply(from, 'Kirim perintah *#lirik [optional]*, contoh *#lirik aku bukan boneka*', id)
+            const ngetik = body.slice(7)
+            const nullis = await nulis(ngetik)
+            client.reply(from, mess.wait, id)
+            client.sendFile(from, nullis, 'ngetik.jpg','neh...')
             break
         case '#lirik':
             if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
