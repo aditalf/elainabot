@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://github.com/ItzTobz/megumikato2"><img src="https://raw.githubusercontent.com/ItzTobz/megumikato2/master/megumikato.jpg"></a>
+  <a href="https://github.com/ItzTobz/megumikato2"><img src="https://avatars1.githubusercontent.com/u/29368318?s=400&u=e804e2dfc71c6a6a033df259b652275fdcb6faf7&v=4"></a>
   <br>
   MEGUMI KATO
  <br>
