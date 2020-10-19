@@ -1,10 +1,9 @@
-<h1 align="center">
-  <br>
+<p align="center">
   <a href="https://github.com/ItzTobz/megumikato2"><img src="https://raw.githubusercontent.com/ItzTobz/megumikato2/master/megumikato.jpg"></a>
   <br>
   MEGUMI KATO
  <br>
-  </h1>
+ </p>
   
 ## Contact
 
