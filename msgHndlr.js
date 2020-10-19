@@ -642,7 +642,7 @@ ${desc}`)
             const music = await slicedArgs.join(' ')
             console.log(music)
             try {
-            const music2 = await axios.get('hhttps://api.vhtear.com/music?query=' + music + '&apikey=Tobz2k19')
+            const music2 = await axios.get('https://api.vhtear.com/music?query=' + music + '&apikey=Tobz2k19')
             const { penyanyi, judul, album, linkImg, linkMp3, filesize, duration } = music2.data.result[0]
             const musik = `*User Ditemukan!*
 
