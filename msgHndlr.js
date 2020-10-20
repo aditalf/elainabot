@@ -18,6 +18,7 @@ const { uploadImages, custom } = require('./lib/fetcher')
 const quotedd = require('./lib/quote')
 const nsfw_ = JSON.parse(fs.readFileSync('./lib/NSFW.json'))
 const welkom = JSON.parse(fs.readFileSync('./lib/welcome.json'))
+const left = JSON.parse(fs.readFileSync('./lib/left.json'))
 const ban = JSON.parse(fs.readFileSync('./lib/banned.json'))
 const bent = require('bent')
 var request = require('request');
@@ -101,7 +102,7 @@ module.exports = msgHandler = async (client, message) => {
         const isGroupAdmins = isGroupMsg ? groupAdmins.includes(sender.id) : false
         const isBotGroupAdmins = isGroupMsg ? groupAdmins.includes(botNumber + '@c.us') : false
 
-        const adminNumber = ['6281311850715@c.us','6281225579096@c.us','6283803749450@c.us','6282112426773@c.us','6282128570120@c.us','6282199110609@c.us','6282311616846@c.us'] 
+        const adminNumber = ['6281311850715@c.us','6281225579096@c.us','6283803749450@c.us','6282112426773@c.us','6282128570120@c.us','6282199110609@c.us','6282311616846c.us'] 
         const isAdmin = adminNumber.includes(sender.id)
         const ownerNumber = ['6281311850715@c.us']
         const isOwner = ownerNumber.includes(sender.id)
@@ -170,6 +171,7 @@ module.exports = msgHandler = async (client, message) => {
             var desc = chat.groupMetadata.desc
             var groupname = name
             var welgrp = welkom.includes(chat.id)
+            var leftgrp = left.includes(chat.id)
             var ngrp = nsfw_.includes(chat.id)
             var grouppic = await client.getProfilePicFromServer(chat.id)
             if (grouppic == undefined) {
@@ -180,6 +182,7 @@ module.exports = msgHandler = async (client, message) => {
             await client.sendFileFromUrl(from, pfp, 'group.png', `➸ *Name : ${groupname}* 
 *➸ Members : ${totalMem}*
 *➸ Welcome : ${welgrp}*
+*➸ Left : ${leftgrp}*
 *➸ NSFW : ${ngrp}*
 *➸ Group Description* 
 ${desc}`)
@@ -359,6 +362,22 @@ ${desc}`)
                 nsfw_.splice(chat.id, 1)
                 fs.writeFileSync('./lib/NSFW.json', JSON.stringify(nsfw_))
                 client.reply(from, 'NSFW Command berhasil di nonaktifkan di group ini!', id)
+            } else {
+                client.reply(from, 'Pilih enable atau disable udin!', id)
+            }
+            break
+        case '#left':
+            if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
+            if (!isGroupAdmins) return client.reply(from, 'Perintah ini hanya bisa di gunakan oleh Admin group!', id)
+            if (args.length === 1) return client.reply(from, 'Pilih enable atau disable!', id)
+            if (args[1].toLowerCase() === 'enable') {
+                left.push(chat.id)
+                fs.writeFileSync('./lib/left.json', JSON.stringify(welkom))
+                client.reply(from, 'Fitur left berhasil di aktifkan di group ini!', id)
+            } else if (args[1].toLowerCase() === 'disable') {
+                left.splice(chat.id, 1)
+                fs.writeFileSync('./lib/left.json', JSON.stringify(welkom))
+                client.reply(from, 'Fitur left berhasil di nonaktifkan di group ini!', id)
             } else {
                 client.reply(from, 'Pilih enable atau disable udin!', id)
             }
@@ -598,17 +617,18 @@ ${desc}`)
           break
         case '#ig':
             if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
-            if (args.length === 1) return client.reply(from, 'Kirim perintah *!ig [linkIg]* untuk contoh silahkan kirim perintah *!readme*')
+            if (args.length === 1) return client.reply(from, 'Kirim perintah *#ig [linkIg]* untuk contoh silahkan kirim perintah *!readme*')
             if (!args[1].match(isUrl) && !args[1].includes('instagram.com')) return client.reply(from, mess.error.Iv, id)
             try {
                 client.reply(from, mess.wait, id)
                 const dlig = await axios.get('https://api.vhtear.com/instadl?link=' + dlig + '&apikey=Tobz2k19')
-                if (dlig.data.result.urlDownload.includes('.mp4')) {
+                const { urlDownload } = sstalk2.data.result
+                if (urlDownload.includes('.mp4')) {
                     var ext = '.mp4'
                 } else {
                     var ext = '.jpg'
                 }
-                await client.sendFileFromUrl(from, dlig.data.result.urlDownload, `igeh${ext}`, '', id)
+                await client.sendFileFromUrl(from, urlDownload, `igeh${ext}`, '', id)
             } catch {
                 client.reply(from, mess.error.Ig, id)
                 }
@@ -642,7 +662,7 @@ ${desc}`)
             const music = await slicedArgs.join(' ')
             console.log(music)
             try {
-            const music2 = await axios.get('https://api.vhtear.com/music?query=' + music + '&apikey=Tobz2k19')
+            const music2 = await axios.get('hhttps://api.vhtear.com/music?query=' + music + '&apikey=Tobz2k19')
             const { penyanyi, judul, album, linkImg, linkMp3, filesize, duration } = music2.data.result[0]
             const musik = `*User Ditemukan!*
 
@@ -791,8 +811,8 @@ ${desc}`)
                 client.reply(from, mess.wait, id)
                 const quotes = arg[1]
                 const author = arg[2]
-                const type = arg[3]
-                await quotemaker(quotes, author, type).then(amsu => {
+                const theme = arg[3]
+                await quotemaker(quotes, author, theme).then(amsu => {
                     client.sendFile(from, amsu, 'quotesmaker.jpg','neh...').catch(() => {
                        client.reply(from, mess.error.Qm, id)
                     })
@@ -997,7 +1017,7 @@ ${desc}`)
             await client.sendTextWithMentions(from, `Perintah diterima, menghapus jabatan @${mentionedJidList[0]}.`)
             break
         case '#join':
-            if (args.length === 1) return client.reply(from, 'Kirim perintah *#join* linkgroup\n\nEx:\n#join https://chat.whatsapp.com/blablablablablabla', id)
+            if (args.length === 1) return client.reply(from, 'Hanya Owner yang bisa memasukan Bot ke dalam Grup!', id)
             if (!isOwner) return client.reply(from, 'Perintah ini hanya untuk Owner bot', id)
             const link = body.slice(6)
             const tGr = await client.getAllGroups()
@@ -1028,18 +1048,20 @@ ${desc}`)
             client.deleteMessage(quotedMsgObj.chatId, quotedMsgObj.id, false)
             break
         case '#block':
+            const blck = args[1]
             if (!isOwner) return client.reply(from, 'Perintah ini hanya untuk Owner bot', id)     
-            if(args.length >= 3){
-                let block = `${args[2]}@c.us`
+            if(args.length >= 1){
+                let block = `${blck}@c.us`
                 await client.contactBlock(block).then(()=>{
                     client.reply(`Success Block ${args[2]}!`)
                 })
             }
             break
         case '#unblock':
-            if (!isOwner) return client.reply(from, 'Perintah ini hanya untuk Owner bot', id)     
-            if(args.length >= 3){
-                let unblock = `${args[2]}@c.us`
+            const ublck = args[1]
+            if (!isOwner) return client.reply(from, 'Perintah ini hanya untuk Owner bot', id)
+            if(args.length >= 1){
+                let unblock = `${ublck}@c.us`
                 await client.contactUnblock(unblock).then(()=>{
                     client.reply(`Success Unblok ${args[2]}!`)
                 })
@@ -1056,7 +1078,7 @@ ${desc}`)
             const ngetik = body.slice(7)
             const nullis = await nulis(ngetik)
             client.reply(from, mess.wait, id)
-            client.sendImage(from, nullis, 'ngetik.png','neh...')
+            client.sendFile(from, nullis, 'ngetik.png','neh...')
             break
         case '#lirik':
             if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
@@ -1084,6 +1106,14 @@ ${desc}`)
                 admn += `➸ ${i.replace(/@c.us/g,'')}\n`
             }
             await client.reply(from, admn, id)
+            break
+        case '#listgroup':
+            if(!isOwner) return client.reply(from, 'Perintah ini hanya untuk owner bot!', id)
+            let gcm = `This is list of Group\nTotal : ${groupname.length}\n`
+            for (let i of groupname) {
+                gcm += `➸ ${i.replace(/@c.us/g,'')}\n`
+            }
+            await client.reply(from, gcm, id)
             break
         case '#listblock':
             if(!isOwner) return client.reply(from, 'Perintah ini hanya untuk owner bot!', id)
@@ -1148,6 +1178,7 @@ ${desc}`)
             client.sendFileFromUrl(from, rindKiy.image, 'Husbu.jpg', rindKiy.teks, id)
             break
         case '#randomhentai':
+            if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
             if (isGroupMsg) {
                 if (!isNsfw) return client.reply(from, 'Command/Perintah NSFW belum di aktifkan di group ini!', id)
                 const hentai = await randomNimek('hentai')
@@ -1317,7 +1348,7 @@ ${desc}`)
             break
         case '#donasi':
         case '#donate':
-            client.reply(from, donate, id)
+            client.sendText(from, donate)
             break
         case '#menu':
         case '#help':

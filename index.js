@@ -1,5 +1,6 @@
 const { create, Client } = require('@open-wa/wa-automate')
 const welcome = require('./lib/welcome')
+const left = require('./lib/left')
 const msgHandler = require('./msgHndlr')
 const options = require('./options')
 
@@ -20,6 +21,11 @@ const start = async (client = new Client()) => {
             })
             msgHandler(client, message)
         }))
+
+        client.onGlobalParicipantsChanged((async (heuh) => {
+            await welcome(client, heuh)
+            left(client, heuh)
+            }))
         
         client.onAddedToGroup(((chat) => {
             let totalMem = chat.groupMetadata.participants.length
