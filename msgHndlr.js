@@ -102,7 +102,7 @@ module.exports = msgHandler = async (client, message) => {
         const isGroupAdmins = isGroupMsg ? groupAdmins.includes(sender.id) : false
         const isBotGroupAdmins = isGroupMsg ? groupAdmins.includes(botNumber + '@c.us') : false
 
-        const adminNumber = ['6281311850715@c.us','6281225579096@c.us','6283803749450@c.us','6282112426773@c.us','6282128570120@c.us','6282199110609@c.us','6282311616846c.us'] 
+        const adminNumber = ['6283170821351@c.us','6281311850715@c.us','6281225579096@c.us','6283803749450@c.us','6282112426773@c.us','6282128570120@c.us','6282199110609@c.us','6282311616846c.us'] 
         const isAdmin = adminNumber.includes(sender.id)
         const ownerNumber = ['6281311850715@c.us']
         const isOwner = ownerNumber.includes(sender.id)
@@ -655,6 +655,7 @@ ${desc}`)
         case '#joox':
             if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
             if (!isOwner, !isAdmin) return client.reply(from, 'Perintah ini hanya untuk Owner & Admin bot', id)
+            client.reply(from, mess.wait, id)
             arg = body.trim().split(' ')
             console.log(...arg[1])
             var slicedArgs = Array.prototype.slice.call(arg, 1);
@@ -1075,10 +1076,10 @@ ${desc}`)
         case '#nulis':
             if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
             if (args.length == 1) return client.reply(from, 'Kirim perintah *#lirik [optional]*, contoh *#lirik aku bukan boneka*', id)
+            client.reply(from, mess.wait, id)
             const ngetik = body.slice(7)
             const nullis = await nulis(ngetik)
-            client.reply(from, mess.wait, id)
-            client.sendFile(from, nullis, 'ngetik.png','neh...')
+            client.sendImage(from, nullis, 'ngetik.png','neh...')
             break
         case '#lirik':
             if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
