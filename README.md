@@ -94,6 +94,7 @@ after running it you need to scan the qr
 |#leaveall       | Leave all grup (owner bot only) |
 |#clearall       | Clear All chat bot (owner bot only) |
 | BETA           | Anti Spam Command |
+| ETC |  Lainnya |
  
 ---
 
