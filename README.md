@@ -54,25 +54,26 @@ after running it you need to scan the qr
 |  #apakah      | Kerang Ajaib                     |
 |  #rate        | Kerang Ajaib                     |
 |  #kapankah    | Kerang Ajaib                     |
+|  #bisakah     | Kerang Ajaib                     |
 |  #sticker     | Sticker Creator                  |
 |  #botstat     | Bot status                       |
-|  #gifsticker  |Animated sticker using giphy url |
+|  #stickergif  |Animated sticker  |
 |  #lirik       | Liryc music                     |
 |   #resi       | Check Shipping info (indonesia only)|
+|   #joox       | Download Music from Joox         |
 |  #quote       | Show Quotes random              |
-| #qanime       |   Show quotes random character anime  |
+| #quotesnime       |   Show quotes random character anime  |
 | #qrcode       |   Text to qrcode                |
 |       #tts    |   Text to speech (id, jp, ar, en)     |
 |       #wait   |   What anime is this            |
-|       #meme   |   Create Custom meme (top text & bottom text)  |
+|       #textmaker |   Create Custom meme (top text & bottom text)  |
 | #rmeme        | Random meme subreddit |
-|  #translate   |   Translate text (quote only)                  |
-|  #ceklokasi   |   check data on the spread of Covid-19 in certain locations|
+|  #igstalk   |   Stalk Instagram        |
+|  #smulestalk   |    Stalk Smule       |
+|  #tiktokstalk    | Stalk Tiktok      |
+|  #covid  |   check data on the spread of Covid-19 in certain locations|
 | #waifu        |   Show waifu random |
-| #wallhp       | Wallpaper HandPhone |
-| #walldekstop  | Wallpaper dekstop |
-| #fanart       | Show fanart |
-|#fanart18      | Show fanart 18+ |
+
 | #wallanime    | Wallpaper anime |
 | #inu          | show a dog image |
 | #neko         | show a cat image |
