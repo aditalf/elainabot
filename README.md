@@ -73,7 +73,6 @@ after running it you need to scan the qr
 |  #tiktokstalk    | Stalk Tiktok      |
 |  #covid  |   check data on the spread of Covid-19 in certain locations|
 | #waifu        |   Show waifu random |
-
 | #wallanime    | Wallpaper anime |
 | #inu          | show a dog image |
 | #neko         | show a cat image |
