@@ -8,7 +8,7 @@
 <a href="https://github.com/ItzTobz"><img title="Author" src="https://img.shields.io/badge/Author-Tobz-orange.svg?style=for-the-badge&logo=github" width="200" height="50"></a>
 </p>
 <p align="center">
-<a href="https://github.com/ItzTobz/followers"><img title="Followers" src="https://img.shields.io/github/followers/ItzTobz?color=blue&style=flat-square" width="50" height="50"></a>
+<a href="https://github.com/ItzTobz/followers"><img title="Followers" src="https://img.shields.io/github/followers/ItzTobz?color=blue&style=flat-square" width="200" height="50"></a>
 <a href="https://github.com/ItzTobz/megumikato2/stargazers/"><img title="Stars" src="https://img.shields.io/github/stars/ItzTobz/megumikato2?color=red&style=flat-square"></a>
 <a href="https://github.com/ItzTobz/megumikato2/network/members"><img title="Forks" src="https://img.shields.io/github/forks/ItzTobz/megumikato2?color=red&style=flat-square"></a>
 <a href="https://github.com/ItzTobz/megumikato2/watchers"><img title="Watching" src="https://img.shields.io/github/watchers/ItzTobz/megumikato2?label=Watchers&color=blue&style=flat-square"></a>
