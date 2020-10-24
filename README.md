@@ -16,7 +16,8 @@
 
 ## Contact
 
-Telegram : t.me/tobz2k19
+[Telegram](https://t.me/tobz2k19)
+[Whatsapp](https://wa.me/6281311850715)
 
 ## Getting Started
 
