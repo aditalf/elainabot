@@ -27,8 +27,8 @@ This project require NodeJS v12.
 Clone this project
 
 ```bash
-> git clone https://github.com/ItzTobz/megumikato2
-> cd ItzTobz
+> git clone https://github.com/ItzTobz/elainabot
+> cd elainabot
 ```
 
 Install the dependencies:
