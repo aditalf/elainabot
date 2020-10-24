@@ -292,7 +292,7 @@ ${desc}`)
             if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
             if (args.length === 1) return client.reply(from, 'Kirim perintah *#wiki [query]*\nContoh : *#wiki asu*', id)
             const query_ = body.slice(6)
-            const wiki = await get.get('https://mhankbarbar.herokuapp.com/api/wiki?q='+ query_+'&apiKey='+barbarkey).json()
+            const wiki = await get.get('https://mhankbarbar.herokuapp.com/api/wiki?q='+ query_+'&lang=id&apiKey='+barbarkey).json()
             if (wiki.error) {
                 client.reply(from, wiki.error, id)
             } else {
