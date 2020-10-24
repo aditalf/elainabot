@@ -2,8 +2,6 @@ const { decryptMedia } = require('@open-wa/wa-decrypt')
 const fs = require('fs-extra')
 const axios = require('axios')
 const moment = require('moment-timezone')
-moment.tz.setDefault('Asia/Jakarta').locale('id')
-const nrc = require('node-run-cmd')
 const os = require('os')
 const get = require('got')
 const color = require('./lib/color')
@@ -114,6 +112,10 @@ module.exports = msgHandler = async (client, message) => {
         const isUrl = new RegExp(/https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&/=]*)/gi)
         const url = args.length !== 0 ? args[0] : ''
         const isQuotedImage = quotedMsg && quotedMsg.type === 'image'
+
+        const vhtearkey = 'YOUR_APIKEY'
+        const barbarkey = 'YOUR_APIKEY'
+
         const errorurl = 'https://steamuserimages-a.akamaihd.net/ugc/954087817129084207/5B7E46EE484181A676C02DFCAD48ECB1C74BC423/?imw=512&&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=false'
         const errorurl2 = 'https://steamuserimages-a.akamaihd.net/ugc/954087817129084207/5B7E46EE484181A676C02DFCAD48ECB1C74BC423/?imw=512&&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=false'
 
@@ -290,11 +292,11 @@ ${desc}`)
             if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
             if (args.length === 1) return client.reply(from, 'Kirim perintah *#wiki [query]*\nContoh : *#wiki asu*', id)
             const query_ = body.slice(6)
-            const wiki = await get.get('https://mhankbarbar.herokuapp.com/api/wiki?q='+ query_).json()
+            const wiki = await get.get('https://mhankbarbar.herokuapp.com/api/wiki?q='+ query_+'&apiKey='+barbarkey).json()
             if (wiki.error) {
                 client.reply(from, wiki.error, id)
             } else {
-                client.reply(from, `➸ *Query* : ${query_}\n\n➸ *Result* : ${wiki.result}`, id)
+                client.sendFileFromUrl(from, `➸ *Query* : ${query_}\n\n➸ *Result* : ${wiki.result}`, id)
             }
             break
         case '#kapankah':
@@ -325,25 +327,6 @@ ${desc}`)
             const jbsk = apakah[Math.floor(Math.random() * (bisakah.length))]
             if (!bsk) client.reply(from, '⚠️ Format salah! Ketik *#menu* untuk penggunaan.')
             await client.sendText(from, `Pertanyaan: *${bsk}* \n\nJawaban: ${jbsk}`)
-            break
-        case '#cuaca':
-            if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
-            if (args.length === 1) return client.reply(from, 'Kirim perintah *#cuaca [tempat]*\nContoh : *#cuaca tangerang', id)
-            const tempat = body.slice(7)
-            const weather = await get.get('https://mhankbarbar.herokuapp.com/api/cuaca?q='+ tempat).json()
-            if (weather.error) {
-                client.reply(from, weather.error, id)
-            } else {
-                client.reply(from, `➸ Tempat : ${weather.result.tempat}\n\n➸ Angin : ${weather.result.angin}\n➸ Cuaca : ${weather.result.cuaca}\n➸ Deskripsi : ${weather.result.desk}\n➸ Kelembapan : ${weather.result.kelembapan}\n➸ Suhu : ${weather.result.suhu}\n➸ Udara : ${weather.result.udara}`, id)
-            }
-            break
-        case '#fb':
-            if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
-            if (args.length === 1) return client.reply(from, 'Kirim perintah *#fb [linkFb]* untuk contoh silahkan kirim perintah *#readme*', id)
-            if (!args[1].includes('facebook.com')) return client.reply(from, mess.error.Iv, id)
-            client.reply(from, mess.wait, id)
-            const epbe = await fb(args[1])
-            client.sendFileFromUrl(from, epbe.url, `Cuih${epbe.exts}`, epbe.capt, id)
             break
         case '#owner':
         case '#creator':
@@ -403,18 +386,11 @@ ${desc}`)
             if (!isNsfw) return
             client.reply(from, '1. #randomHentai\n2. #randomNsfwNeko\n3. #nhentai [kode]', id)
             break
-        case '#infogempa':
-            if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
-            const bmkg = await get.get('https://mhankbarbar.herokuapp.com/api/infogempa').json()
-            const { potensi, koordinat, lokasi, kedalaman, magnitude, waktu, map } = bmkg
-            const hasil = `*${waktu}*\n📍 *Lokasi* : *${lokasi}*\n〽️ *Kedalaman* : *${kedalaman}*\n💢 *Magnitude* : *${magnitude}*\n🔘 *Potensi* : *${potensi}*\n📍 *Koordinat* : *${koordinat}*`
-            client.sendFileFromUrl(from, map, 'shakemap.jpg', hasil, id)
-            break
         // ANIME //
         case '#otakudesu':
             if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
             if (args.length === 1) return client.reply(from, 'Kirim perintah *#otakudesu [query]*\nContoh : *#otakudesu darling in the franxx*', id)
-            const animes = await get.get('https://mhankbarbar.herokuapp.com/api/otakudesu?q=' + body.slice(7)).json()
+            const animes = await get.get('https://mhankbarbar.herokuapp.com/api/otakudesu?q=' + body.slice(7) + '&apiKey=' + barbarkey).json()
             if (animes.error) return client.reply(from, animes.error, id)
             const res_animes = `${animes.title}\n\n${animes.info}\n\n${animes.sinopsis}`
             client.sendFileFromUrl(from, animes.thumb, 'otakudesu.jpg', res_animes, id)
@@ -422,7 +398,7 @@ ${desc}`)
         case '#kusonime':
             if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
             if (args.length === 1) return client.reply(from, 'Kirim perintah *#kusonime [query]*\nContoh : *#kusonime darling in the franxx*', id)
-            const animeq = await get.get('https://mhankbarbar.herokuapp.com/api/kuso?q=' + body.slice(7)).json()
+            const animeq = await get.get('https://mhankbarbar.herokuapp.com/api/kuso?q=' + body.slice(7) + '&apiKey=' + barbarkey).json()
             if (animeq.error) return client.reply(from, animeq.error, id)
             const res_animeq = `${animeq.title}\n\n${animeq.info}\n\n${animeq.sinopsis}\n\n${animeq.link_dl}`
             client.sendFileFromUrl(from, animeq.thumb, 'kusonime.jpg', res_animeq, id)
@@ -430,7 +406,7 @@ ${desc}`)
         case '#dewabatch':
             if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
             if (args.length === 1) return client.reply(from, 'Kirim perintah *#dewabatch [query]*\nContoh : *#dewabatch darling in the franxx*', id)
-            const animek = await get.get('https://mhankbarbar.herokuapp.com/api/dewabatch?q=' + body.slice(7)).json()
+            const animek = await get.get('https://mhankbarbar.herokuapp.com/api/dewabatch?q=' + body.slice(7) + '&apiKey=' + barbarkey).json()
             if (animek.error) return client.reply(from, animek.error, id)
             const res_animek = `${animek.result}\n\n${animek.sinopsis}`
             client.sendFileFromUrl(from, animek.thumb, 'dewabatch.jpg', res_animek, id)
@@ -438,14 +414,14 @@ ${desc}`)
         case '#komiku':
             if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
             if (args.length === 1) return client.reply(from, 'Kirim perintah *#komiku [query]*\nContoh : *#komiku darling in the franxx*', id)
-            const animep = await get.get('https://mhankbarbar.herokuapp.com/api/komiku?q=' + body.slice(7)).json()
+            const animep = await get.get('https://mhankbarbar.herokuapp.com/api/komiku?q=' + body.slice(7) + '&apiKey=' + barbarkey).json()
             if (animep.error) return client.reply(from, animep.error, id)
             const res_animep = `${animep.info}\n\n${animep.sinopsis}\n\n${animep.link_dl}`
             client.sendFileFromUrl(from, animep.thumb, 'komiku.jpg', res_animep, id)
             break
-        case '#myanimelist':
+        case '#malanime':
             if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
-            const keyword = message.body.replace('#myanimelist', '')
+            const keyword = message.body.replace('#malanime', '')
             try {
             const data = await fetch(
            `https://api.jikan.moe/v3/search/anime?q=${keyword}`
@@ -472,8 +448,67 @@ ${desc}`)
              await client.sendFileFromUrl(from, errorurl2, 'error.png', '💔️ Maaf, Anime tidak ditemukan')
            }
           break
-        
+        case '#malcharacter':
+            if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
+            const keywords = message.body.replace('#malcharacter', '')
+            try {
+            const data = await fetch(
+           `https://api.jikan.moe/v3/search/character?q=${keywords}`
+            )
+            const parsed = await data.json()
+            if (!parsed) {
+              await client.sendFileFromUrl(from, errorurl2, 'error.png', '💔️ Maaf, Anime tidak ditemukan', id)
+              return null
+              }
+            const { name, alternative_names, url, image_url } = parsed.results[0]
+            const content = `*Anime Ditemukan!*
+✨️ *Name:* ${title}
+💌️ *Alternative Names:* ${rated}
+🌐️ *URL*: ${url}`
+
+            const image = await bent("buffer")(image_url)
+            const base64 = `data:image/jpg;base64,${image.toString("base64")}`
+            client.sendImage(from, base64, title, content)
+           } catch (err) {
+             console.error(err.message)
+             await client.sendFileFromUrl(from, errorurl2, 'error.png', '💔️ Maaf, Anime tidak ditemukan')
+           }
+          break
         // MEDIA //
+        case '#infogempa':
+            if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
+            const bmkg = await get.get('https://mhankbarbar.herokuapp.com/api/infogempa'+'&apiKey='+barbarkey).json()
+            const { potensi, koordinat, lokasi, kedalaman, magnitude, waktu, map } = bmkg
+            const hasil = `*${waktu}*\n📍 *Lokasi* : *${lokasi}*\n〽️ *Kedalaman* : *${kedalaman}*\n💢 *Magnitude* : *${magnitude}*\n🔘 *Potensi* : *${potensi}*\n📍 *Koordinat* : *${koordinat}*`
+            client.sendFileFromUrl(from, map, 'shakemap.jpg', hasil, id)
+            break
+        case '#ssweb':
+            if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
+            if (args.length === 1) return client.reply(from, 'Kirim perintah *#ssweb [linkWeb]*\nContoh : *#ssweb https://neonime.vip*', id)
+            const ssw = await get.get('https://mhankbarbar.herokuapp.com/api/url2image?url=' + body.slice(7) + '&apiKey=' + barbarkey).json()
+            if (ssw.error) return client.reply(from, ssw.error, id)
+            const ssw2 = `Filesize: ${ssw.filesize}`
+            client.sendFileFromUrl(from, ssw.result, 'ssweb.jpg', ssw2, id)
+            break
+        case '#cuaca':
+            if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
+            if (args.length === 1) return client.reply(from, 'Kirim perintah *#cuaca [tempat]*\nContoh : *#cuaca tangerang', id)
+            const tempat = body.slice(7)
+            const weather = await get.get('https://mhankbarbar.herokuapp.com/api/cuaca?q='+ tempat +'&apiKey='+ barbarkey).json()
+            if (weather.error) {
+                client.reply(from, weather.error, id)
+            } else {
+                client.reply(from, `➸ Tempat : ${weather.result.tempat}\n\n➸ Angin : ${weather.result.angin}\n➸ Cuaca : ${weather.result.cuaca}\n➸ Deskripsi : ${weather.result.desk}\n➸ Kelembapan : ${weather.result.kelembapan}\n➸ Suhu : ${weather.result.suhu}\n➸ Udara : ${weather.result.udara}`, id)
+            }
+            break
+        case '#fb':
+            if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
+            if (args.length === 1) return client.reply(from, 'Kirim perintah *#fb [linkFb]* untuk contoh silahkan kirim perintah *#readme*', id)
+            if (!args[1].includes('facebook.com')) return client.reply(from, mess.error.Iv, id)
+            client.reply(from, mess.wait, id)
+            const epbe = await fb(args[1])
+            client.sendFileFromUrl(from, epbe.url, `Cuih${epbe.exts}`, epbe.capt, id)
+            break
         case '#covid':
             if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group', id)
             arg = body.trim().split(' ')
@@ -506,7 +541,7 @@ ${desc}`)
             if (!isLinks) return client.reply(from, mess.error.Iv, id)
             try {
                 client.reply(from, mess.wait, id)
-                const resp = await get.get('https://mhankbarbar.herokuapp.com/api/yta?url='+ args[1]).json()
+                const resp = await get.get('https://mhankbarbar.herokuapp.com/api/yta?url='+ args[1] +'&apiKey='+ barbarkey).json()
                 if (resp.error) {
                     client.reply(from, resp.error, id)
                 } else {
@@ -520,14 +555,13 @@ ${desc}`)
                 client.reply(from, mess.error.Yt3, id)
             }
             break
-        case '#ytmp4':
-            if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
-            if (args.length === 1) return client.reply(from, 'Kirim perintah *#ytmp4 [linkYt]*, untuk contoh silahkan kirim perintah *#readme*')
+         case '#ytmp4':
+            if (args.length === 1) return client.reply(from, 'Kirim perintah *#ytmp4 [linkYt]*, untuk contoh silahkan kirim perintah *!readme*')
             let isLin = args[1].match(/(?:https?:\/{2})?(?:w{3}\.)?youtu(?:be)?\.(?:com|be)(?:\/watch\?v=|\/)([^\s&]+)/)
             if (!isLin) return client.reply(from, mess.error.Iv, id)
             try {
                 client.reply(from, mess.wait, id)
-                const ytv = await get.get('https://mhankbarbar.herokuapp.com/api/ytv?url='+ args[1]).json()
+                const ytv = await get.get('https://mhankbarbar.herokuapp.com/api/ytv?url='+ args[1] +'&apiKey='+ barbarkey).json()
                 if (ytv.error) {
                     client.reply(from, ytv.error, id)
                 } else {
@@ -540,25 +574,78 @@ ${desc}`)
                 client.reply(from, mess.error.Yt4, id)
             }
             break
+        case '#artinama':
+            if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
+            if (args.length === 1) return client.reply(from, 'Kirim perintah *#artinama [query]*\nContoh : *#artinama Tobz*', id)
+            const anm = await get.get('https://api.vhtear.com/artinama?nama=' + body.slice(7) + '&apikey=' + vhtearkey).json()
+            if (anm.error) return client.reply(from, anm.error, id)
+            const anm2 = `➸ Artinama : ${anm.result.hasil}`
+            client.reply(from, anm2, id)
+            break
         case '#tiktok':
             if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
             if (args.length === 1) return client.reply(from, 'Kirim perintah *#tiktok [query]*\nContoh : *#tiktok https://vt.tiktok.com/yqyjPX/*', id)
-            const tkp = await get.get('https://api.vhtear.com/tiktokdl?link=' + body.slice(7) + '&apikey=Tobz2k19').json()
+            const tkp = await get.get('https://api.vhtear.com/tiktokdl?link=' + body.slice(7) + '&apikey=' + vhtearkey).json()
             if (tkp.error) return client.reply(from, tkp.error, id)
             const tpk = `➸ Judul : ${tkp.result.title}\n➸ Deskripsi : ${tkp.result.desk}\n➸ Durasi : ${tkp.result.duration}\n➸ Dibuat : ${tkp.result.dibuat}`
             client.sendFileFromUrl(from, tkp.result.video, `${tkp.result.title}.mp4`, tpk, id)
             break
+        case '#resepmasakan':
+            if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
+            if (args.length === 1)  return client.reply(from, 'Kirim perintah *#resepmasakan [optional]*\nContoh *#resepmasakan rawon*', id)
+            arg = body.trim().split(' ')
+            console.log(...arg[1])
+            var slicedArgs = Array.prototype.slice.call(arg, 1);
+            console.log(slicedArgs)
+            const rmk = await slicedArgs.join(' ')
+            console.log(rmk)
+            try {
+            const rmk2 = await axios.get('https://api.vhtear.com/resepmasakan?query=' + rmk + '&apikey=' + vhtearkey)
+            const { bahan, cara, image, title  } = rmk2.data.result
+            const rmk3 = `*User Ditemukan!*
+➸ *Judul:* ${title}
+➸ *Bahan:* ${bahan}
+➸ *Cara:* ${cara}`
+
+            const pictk = await bent("buffer")(image)
+            const base64 = `data:image/jpg;base64,${pictk.toString("base64")}`
+            client.sendImage(from, base64, title, rmk3)
+            } catch (err) {
+             console.error(err.message)
+             await client.sendFileFromUrl(from, errorurl2, 'error.png', '💔️ Maaf, User tidak ditemukan')
+           }
+          break
         case '#igstalk':
             if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
-            if (args.length === 1)  return client.reply(from, 'Kirim perintah *#igStalk @username*\nContoh *#igStalk @duar_amjay*', id)
-            const stalk = await get.get('https://mhankbarbar.herokuapp.com/api/stalk?username='+ args[1]).json()
-            if (stalk.error) return client.reply(from, stalk.error, id)
-            const { Biodata, Jumlah_Followers, Jumlah_Following, Jumlah_Post, Name, Username, Profile_pic } = stalk
-            const caps = `➸ *Nama* : ${Name}\n➸ *Username* : ${Username}\n➸ *Jumlah Followers* : ${Jumlah_Followers}\n➸ *Jumlah Following* : ${Jumlah_Following}\n➸ *Jumlah Postingan* : ${Jumlah_Post}\n➸ *Biodata* : ${Biodata}`
-            await client.sendFileFromUrl(from, Profile_pic, 'Profile.jpg', caps, id)
-            break
+            if (args.length === 1)  return client.reply(from, 'Kirim perintah *#igstalk @username*\nContoh *#igstalk @duar_amjay*', id)
+            arg = body.trim().split(' ')
+            console.log(...arg[1])
+            var slicedArgs = Array.prototype.slice.call(arg, 1);
+            console.log(slicedArgs)
+            const istalk = await slicedArgs.join(' ')
+            console.log(istalk)
+            try {
+            const istalk2 = await axios.get('https://api.vhtear.com/igprofile?query=' + istalk + '&apikey=' + vhtearkey)
+            const { biography, follower, follow, post_count, full_name, username, picture, is_private } = istalk2.data.result
+            const istalk3 = `*User Ditemukan!*
+➸ *Username:* ${username}
+➸ *Nama:* ${full_name}
+➸ *Bio:* ${biography}
+➸ *Mengikuti:* ${follow}
+➸ *Pengikut:* ${follower}
+➸ *Jumlah Postingan:* ${post_count}`
+
+            const pictk = await bent("buffer")(picture)
+            const base64 = `data:image/jpg;base64,${pictk.toString("base64")}`
+            client.sendImage(from, base64, username, istalk3)
+            } catch (err) {
+             console.error(err.message)
+             await client.sendFileFromUrl(from, errorurl2, 'error.png', '💔️ Maaf, User tidak ditemukan')
+           }
+          break
         case '#tiktokstalk':
             if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
+            if (args.length === 1)  return client.reply(from, 'Kirim perintah *#tiktokstalk @username*\nContoh *#tiktokstalk @duar_amjay*', id)
             arg = body.trim().split(' ')
             console.log(...arg[1])
             var slicedArgs = Array.prototype.slice.call(arg, 1);
@@ -566,7 +653,7 @@ ${desc}`)
             const tstalk = await slicedArgs.join(' ')
             console.log(tstalk)
             try {
-            const tstalk2 = await axios.get('https://api.vhtear.com/tiktokprofile?query=' + tstalk + '&apikey=Tobz2k19')
+            const tstalk2 = await axios.get('https://api.vhtear.com/tiktokprofile?query=' + tstalk + '&apikey=' + vhtearkey)
             const { username, bio, follow, follower, title, like_count, video_post, description, picture, url_account } = tstalk2.data.result
             const tiktod = `*User Ditemukan!*
 ➸ *Username:* ${username}
@@ -575,7 +662,7 @@ ${desc}`)
 ➸ *Mengikuti:* ${follow}
 ➸ *Pengikut:* ${follower}
 ➸ *Jumlah Like*: ${like_count}
-➸ *Jumlah Postingan:* ${username}
+➸ *Jumlah Postingan:* ${video_post}
 ➸ *Deskripsi:* ${description}
 ➸ *Link:* ${url_account}`
 
@@ -596,7 +683,7 @@ ${desc}`)
             const sstalk = await slicedArgs.join(' ')
             console.log(sstalk)
             try {
-            const sstalk2 = await axios.get('https://api.vhtear.com/smuleprofile?query=' + sstalk + '&apikey=Tobz2k19')
+            const sstalk2 = await axios.get('https://api.vhtear.com/smuleprofile?query=' + sstalk + '&apikey=' + vhtearkey)
             const { username, full_name, follower, follow, biography, is_vip, picture, recording } = sstalk2.data.result
             const smule = `*User Ditemukan!*
 ➸ *Username:* ${username}
@@ -616,19 +703,17 @@ ${desc}`)
            }
           break
         case '#ig':
-            if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
             if (args.length === 1) return client.reply(from, 'Kirim perintah *#ig [linkIg]* untuk contoh silahkan kirim perintah *!readme*')
             if (!args[1].match(isUrl) && !args[1].includes('instagram.com')) return client.reply(from, mess.error.Iv, id)
             try {
                 client.reply(from, mess.wait, id)
-                const dlig = await axios.get('https://api.vhtear.com/instadl?link=' + dlig + '&apikey=Tobz2k19')
-                const { urlDownload } = sstalk2.data.result
-                if (urlDownload.includes('.mp4')) {
+                const resp = await get.get('https://mhankbarbar.herokuapp.com/api/ig?url='+ args[1] +'&apiKey='+ barbarkey).json()
+                if (resp.result.includes('.mp4')) {
                     var ext = '.mp4'
                 } else {
                     var ext = '.jpg'
                 }
-                await client.sendFileFromUrl(from, urlDownload, `igeh${ext}`, '', id)
+                await client.sendFileFromUrl(from, resp.result, `igeh${ext}`, '', id)
             } catch {
                 client.reply(from, mess.error.Ig, id)
                 }
@@ -642,7 +727,7 @@ ${desc}`)
             const gimage = await slicedArgs.join(' ')
             console.log(gimage)
             try {
-            const gimage2 = await get.get('https://api.vhtear.com/googleimg?query=' + gimage + '&apikey=Tobz2k19').json()
+            const gimage2 = await get.get('https://api.vhtear.com/googleimg?query=' + gimage + '&apikey=' + vhtearkey).json()
             const { result_search } = gimage2.data.result
             const pictk = await bent("buffer")(result_search)
             const base64 = `data:image/jpg;base64,${pictk.toString("base64")}`
@@ -663,7 +748,7 @@ ${desc}`)
             const music = await slicedArgs.join(' ')
             console.log(music)
             try {
-            const music2 = await axios.get('hhttps://api.vhtear.com/music?query=' + music + '&apikey=Tobz2k19')
+            const music2 = await axios.get('hhttps://api.vhtear.com/music?query=' + music + '&apikey=' + vhtearkey)
             const { penyanyi, judul, album, linkImg, linkMp3, filesize, duration } = music2.data.result[0]
             const musik = `*User Ditemukan!*
 
@@ -828,7 +913,7 @@ ${desc}`)
             const chatz = await client.getAllChatIds()
             for (let ids of chatz) {
                 var cvk = await client.getChatById(ids)
-                if (!cvk.isReadOnly) await client.sendText(ids, `[ MEGUMI KATO BROADCAST ]\n\n${msg}`)
+                if (!cvk.isReadOnly) await client.sendText(ids, `[ ELAINA BROADCAST ]\n\n${msg}`)
             }
             client.reply(from, 'Broadcast Success!', id)
             break
@@ -856,7 +941,7 @@ ${desc}`)
                 heho += '╠➥'
                 heho += ` @${groupMek[i].id.replace(/@c.us/g, '')}\n`
             }
-            heho += '╚═〘 MEGUMI KATO BOT 〙'
+            heho += '╚═〘 ELAINA BOT 〙'
             await sleep(2000)
             await client.sendTextWithMentions(from, heho)
             break
@@ -870,7 +955,7 @@ ${desc}`)
                 hehe += '╠➥'
                 hehe += ` @${groupMem[i].id.replace(/@c.us/g, '')}\n`
             }
-            hehe += '╚═〘 MEGUMI KATO BOT 〙'
+            hehe += '╚═〘 ELAINA KATO BOT 〙'
             await sleep(2000)
             await client.sendTextWithMentions(from, hehe)
             break
@@ -970,7 +1055,7 @@ ${desc}`)
         case '#oleave':
             if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group', id)
             if (!isOwner, !isAdmin) return client.reply(from, 'Perintah ini hanya untuk Owner & Admin bot', id)
-            await client.sendText(from,'MEGUMI DIPERINTAHKAN KELUAR OLEH OWNER!!').then(() => client.leaveGroup(groupId))
+            await client.sendText(from,'ELAINA DIPERINTAHKAN KELUAR OLEH OWNER!!').then(() => client.leaveGroup(groupId))
             break
         case '#leave':
             if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group', id)
@@ -1092,7 +1177,7 @@ ${desc}`)
             if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
             if (args.length === 1) return client.reply(from, 'Kirim perintah *#chord [query]*, contoh *#chord aku bukan boneka*', id)
             const query__ = body.slice(7)
-            const chord = await get.get('https://mhankbarbar.herokuapp.com/api/chord?q='+ query__).json()
+            const chord = await get.get('https://mhankbarbar.herokuapp.com/api/chord?q='+ query__+'&apiKey='+ barbarkey).json()
             if (chord.error) return client.reply(from, chord.error, id)
             client.reply(from, chord.result, id)
             break
@@ -1101,8 +1186,8 @@ ${desc}`)
             const listDaerah = await get('https://mhankbarbar.herokuapp.com/daerah').json()
             client.reply(from, listDaerah, id)
             break
-        case '#megumiadmin':
-            let admn = `This is list of Megumi Admin\nTotal : ${adminNumber.length}\n`
+        case '#elainaadmin':
+            let admn = `This is list of Elaina Admin\nTotal : ${adminNumber.length}\n`
             for (let i of adminNumber) {
                 admn += `➸ ${i.replace(/@c.us/g,'')}\n`
             }
@@ -1128,7 +1213,7 @@ ${desc}`)
             if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
             if (args.length === 1) return client.reply(from, '[❗] Kirim perintah *#jadwalShalat [daerah]*\ncontoh : *#jadwalShalat Tangerang*\nUntuk list daerah kirim perintah *#listDaerah*')
             const daerah = body.slice(14)
-            const jadwalShalat = await get.get(`https://mhankbarbar.herokuapp.com/api/jadwalshalat?daerah=${daerah}`).json()
+            const jadwalShalat = await get.get(`https://mhankbarbar.herokuapp.com/api/jadwalshalat?daerah=${daerah}&apiKey=` + barbarkey).json()
             if (jadwalShalat.error) return client.reply(from, jadwalShalat.error, id)
             const { Imsyak, Subuh, Dhuha, Dzuhur, Ashar, Maghrib, Isya } = await jadwalShalat
             arrbulan = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
@@ -1167,7 +1252,7 @@ ${desc}`)
             break
         case '#waifu':
             if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
-            const waifu = await get.get('https://mhankbarbar.herokuapp.com/api/waifu').json()
+            const waifu = await get.get('https://mhankbarbar.herokuapp.com/api/waifu'+barbarkey).json()
             client.sendFileFromUrl(from, waifu.image, 'Waifu.jpg', `➸ Name : ${waifu.name}\n➸ Description : ${waifu.desc}\n\n➸ Source : ${waifu.source}`, id)
             break
         case '#husbu':
@@ -1320,14 +1405,6 @@ ${desc}`)
             if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
             q7 = Math.floor(Math.random() * 890) + 1;
             client.sendFileFromUrl(from, 'https://assets.pokemon.com/assets/cms2/img/pokedex/full/'+q7+'.png','Pokemon.png',)
-            break
-        case '#ssweb':
-            if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
-            const _query = body.slice(4)
-            if (!_query.match(isUrl)) return client.reply(from, mess.error.Iv, id)
-            if (args.length === 1) return client.reply(from, 'Kirim perintah *#ssweb [web]*\nContoh *#ssweb https://google.com*', id)
-            await ss(_query).then(() => client.sendFile(from, './media/img/screenshot.jpeg', 'screenshot.jpeg', '', id))
-            .catch(() => client.reply(from, `Error tidak dapat mengambil screenshot website ${_query}`, id))
             break
         case '#quote':
         case '#quotes':

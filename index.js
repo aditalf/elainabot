@@ -43,7 +43,7 @@ const start = async (client = new Client()) => {
 
         // listening on Incoming Call
         client.onIncomingCall(( async (call) => {
-            await client.sendText(call.peerJid, 'Maaf, saya tidak bisa menerima panggilan. nelfon = block!.\nbila ingin di unblock kamu harus berdonasi dan hubungi whatsapp admin: 081311850715')
+            await client.sendText(call.peerJid, 'Maaf, saya tidak bisa menerima panggilan. nelfon = block!.\nbila ingin di unblock kamu harus berdonasi dan hubungi whatsapp owner: 081311850715')
             .then(() => client.contactBlock(call.peerJid))
         }))
     }
