@@ -48,6 +48,6 @@ const start = async (client = new Client()) => {
         }))
     }
 
-create('BarBar', options(true, start))
+create('Elaina', options(true, start))
     .then(client => start(client))
     .catch((error) => console.log(error))
