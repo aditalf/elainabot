@@ -19,6 +19,11 @@
 - [Telegram](https://t.me/tobz2k19)
 - [Whatsapp](https://wa.me/6281311850715)
 
+## APIKEY
+Open msgHndlr then edit & paste it in YOUR_APIKEY
+- [VHTEAR](https://api.vhtear.com)
+- [MHANKBARBAR](https://mhankbarbar.herokuapp.com/api)
+
 ## Getting Started
 
 This project require NodeJS v12.
