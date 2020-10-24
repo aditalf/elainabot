@@ -9,9 +9,9 @@
 </p>
 <p align="center">
 <a href="https://github.com/ItzTobz/followers"><img title="Followers" src="https://img.shields.io/github/followers/ItzTobz?color=blue&style=flat-square" width="200" height="50"></a>
-<a href="https://github.com/ItzTobz/megumikato2/stargazers/"><img title="Stars" src="https://img.shields.io/github/stars/ItzTobz/megumikato2?color=red&style=flat-square"></a>
-<a href="https://github.com/ItzTobz/megumikato2/network/members"><img title="Forks" src="https://img.shields.io/github/forks/ItzTobz/megumikato2?color=red&style=flat-square"></a>
-<a href="https://github.com/ItzTobz/megumikato2/watchers"><img title="Watching" src="https://img.shields.io/github/watchers/ItzTobz/megumikato2?label=Watchers&color=blue&style=flat-square"></a>
+<a href="https://github.com/ItzTobz/megumikato2/stargazers/"><img title="Stars" src="https://img.shields.io/github/stars/ItzTobz/megumikato2?color=red&style=flat-square" width="200" height="50"></a>
+<a href="https://github.com/ItzTobz/megumikato2/network/members"><img title="Forks" src="https://img.shields.io/github/forks/ItzTobz/megumikato2?color=red&style=flat-square" width="200" height="50"></a>
+<a href="https://github.com/ItzTobz/megumikato2/watchers"><img title="Watching" src="https://img.shields.io/github/watchers/ItzTobz/megumikato2 width="200" height="50"?label=Watchers&color=blue&style=flat-square"></a>
 </p>
 
 ## Contact
