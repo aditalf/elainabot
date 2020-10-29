@@ -24,6 +24,10 @@ Open msgHndlr then edit & paste it in YOUR_APIKEY
 - [VHTEAR](https://api.vhtear.com)
 - [MHANKBARBAR](https://mhankbarbar.herokuapp.com/api)
 
+## Donate
+- [Saweria](https://saweria.co/ItzTobz)
+- [Dana](https://link.dana.id/qr/17mlqta)
+
 ## Getting Started
 
 This project require NodeJS v12.
